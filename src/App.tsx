@@ -9,6 +9,8 @@ import { AuthForm } from "@/components/auth/AuthForm";
 import { AuthenticatedApp } from "@/pages/AuthenticatedApp";
 import Index from "./pages/Index";
 import BookingPage from "./pages/BookingPage";
+import SubscriptionPage from "./pages/SubscriptionPage";
+import SettingsPage from "./pages/SettingsPage";
 import InvoiceGenerator from "./components/InvoiceGenerator";
 import NotFound from "./pages/NotFound";
 
@@ -21,7 +23,7 @@ const AppContent = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
@@ -38,6 +40,8 @@ const AppContent = () => {
         <Route path="/" element={<AuthenticatedApp />} />
         <Route path="/dashboard" element={<AuthenticatedApp />} />
         <Route path="/booking" element={<BookingPage />} />
+        <Route path="/subscription" element={<SubscriptionPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="/invoice" element={<InvoiceGenerator />} />
         <Route path="/public/:subdomain" element={<Index />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

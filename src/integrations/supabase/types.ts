@@ -89,6 +89,44 @@ export type Database = {
           },
         ]
       }
+      business_payment_settings: {
+        Row: {
+          business_id: string
+          created_at: string
+          default_currency: string | null
+          enabled_payment_gateways: string[] | null
+          gateway_configurations: Json | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          default_currency?: string | null
+          enabled_payment_gateways?: string[] | null
+          gateway_configurations?: Json | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          default_currency?: string | null
+          enabled_payment_gateways?: string[] | null
+          gateway_configurations?: Json | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_payment_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_settings: {
         Row: {
           auto_confirm_bookings: boolean | null
@@ -257,6 +295,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      currencies: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          symbol: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          symbol: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          symbol?: string
+        }
+        Relationships: []
       }
       invoice_items: {
         Row: {
@@ -459,6 +524,42 @@ export type Database = {
           },
         ]
       }
+      payment_gateways: {
+        Row: {
+          configuration: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+          supported_currencies: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          configuration?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+          supported_currencies?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          supported_currencies?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           business_id: string
@@ -550,6 +651,108 @@ export type Database = {
           },
         ]
       }
+      subscription_plans: {
+        Row: {
+          created_at: string
+          currency: string | null
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          max_bookings_per_month: number | null
+          max_services: number | null
+          max_staff: number | null
+          name: string
+          price_monthly: number
+          price_yearly: number | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          max_bookings_per_month?: number | null
+          max_services?: number | null
+          max_staff?: number | null
+          name: string
+          price_monthly: number
+          price_yearly?: number | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          max_bookings_per_month?: number | null
+          max_services?: number | null
+          max_staff?: number | null
+          name?: string
+          price_monthly?: number
+          price_yearly?: number | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          business_id: string
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          plan_id: string
+          status: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          current_period_end: string
+          current_period_start?: string
+          id?: string
+          plan_id: string
+          status?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          plan_id?: string
+          status?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -579,7 +782,7 @@ export type Database = {
       invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
       notification_status: "pending" | "sent" | "delivered" | "failed"
       notification_type: "email" | "sms" | "whatsapp"
-      subscription_plan: "free" | "pro" | "enterprise"
+      subscription_plan: "free" | "basic" | "business" | "corporate"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -706,7 +909,7 @@ export const Constants = {
       invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
       notification_status: ["pending", "sent", "delivered", "failed"],
       notification_type: ["email", "sms", "whatsapp"],
-      subscription_plan: ["free", "pro", "enterprise"],
+      subscription_plan: ["free", "basic", "business", "corporate"],
     },
   },
 } as const

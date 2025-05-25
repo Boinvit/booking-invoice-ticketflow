@@ -2,8 +2,9 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Settings, Users, Calendar, FileText, DollarSign } from 'lucide-react';
+import { LogOut, Settings, Users, Calendar, FileText, DollarSign, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
@@ -27,7 +29,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">BookFlow</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Boinvit</h1>
             <p className="text-sm text-gray-600">Welcome back, {user?.email}</p>
           </div>
           <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
@@ -40,7 +42,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200 px-6 py-2">
         <div className="flex space-x-6">
-          <Button variant="ghost" className="flex items-center gap-2">
+          <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/')}>
+            <Calendar className="h-4 w-4" />
+            Dashboard
+          </Button>
+          <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/booking')}>
             <Calendar className="h-4 w-4" />
             Bookings
           </Button>
@@ -48,7 +54,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <Users className="h-4 w-4" />
             Clients
           </Button>
-          <Button variant="ghost" className="flex items-center gap-2">
+          <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/invoice')}>
             <FileText className="h-4 w-4" />
             Invoices
           </Button>
@@ -56,7 +62,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <DollarSign className="h-4 w-4" />
             Services
           </Button>
-          <Button variant="ghost" className="flex items-center gap-2">
+          <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/subscription')}>
+            <CreditCard className="h-4 w-4" />
+            Subscription
+          </Button>
+          <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/settings')}>
             <Settings className="h-4 w-4" />
             Settings
           </Button>
