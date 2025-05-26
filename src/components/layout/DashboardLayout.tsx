@@ -2,7 +2,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Settings, Users, Calendar, FileText, DollarSign, CreditCard } from 'lucide-react';
+import { LogOut, Settings, Users, Calendar, FileText, DollarSign, CreditCard, Wrench } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,6 +50,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <Calendar className="h-4 w-4" />
             Bookings
           </Button>
+          <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/services')}>
+            <Wrench className="h-4 w-4" />
+            Services
+          </Button>
           <Button variant="ghost" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Clients
@@ -57,10 +61,6 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/invoice')}>
             <FileText className="h-4 w-4" />
             Invoices
-          </Button>
-          <Button variant="ghost" className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
-            Services
           </Button>
           <Button variant="ghost" className="flex items-center gap-2" onClick={() => navigate('/subscription')}>
             <CreditCard className="h-4 w-4" />

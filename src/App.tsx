@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import BookingPage from "./pages/BookingPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import SettingsPage from "./pages/SettingsPage";
+import ServicesPage from "./pages/ServicesPage";
 import InvoiceGenerator from "./components/InvoiceGenerator";
 import NotFound from "./pages/NotFound";
 
@@ -41,6 +42,7 @@ const AppContent = () => {
         <Route path="/" element={<AuthenticatedApp />} />
         <Route path="/dashboard" element={<AuthenticatedApp />} />
         <Route path="/booking" element={<BookingPage />} />
+        <Route path="/services" element={<ServicesPage />} />
         <Route path="/subscription" element={<SubscriptionPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/invoice" element={<InvoiceGenerator />} />
