@@ -127,6 +127,48 @@ export type Database = {
           },
         ]
       }
+      business_reviews: {
+        Row: {
+          booking_id: string
+          business_id: string
+          comment: string | null
+          created_at: string | null
+          id: string
+          rating: number
+        }
+        Insert: {
+          booking_id: string
+          business_id: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating: number
+        }
+        Update: {
+          booking_id?: string
+          business_id?: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_settings: {
         Row: {
           auto_confirm_bookings: boolean | null
@@ -186,6 +228,7 @@ export type Database = {
       businesses: {
         Row: {
           address: string | null
+          average_rating: number | null
           business_hours: Json | null
           city: string | null
           country: string | null
@@ -202,12 +245,14 @@ export type Database = {
           subscription_plan:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
+          total_reviews: number | null
           updated_at: string
           user_id: string
           website: string | null
         }
         Insert: {
           address?: string | null
+          average_rating?: number | null
           business_hours?: Json | null
           city?: string | null
           country?: string | null
@@ -224,12 +269,14 @@ export type Database = {
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
+          total_reviews?: number | null
           updated_at?: string
           user_id: string
           website?: string | null
         }
         Update: {
           address?: string | null
+          average_rating?: number | null
           business_hours?: Json | null
           city?: string | null
           country?: string | null
@@ -246,6 +293,7 @@ export type Database = {
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
+          total_reviews?: number | null
           updated_at?: string
           user_id?: string
           website?: string | null

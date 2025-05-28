@@ -172,6 +172,9 @@ export const BookingCalendar = ({ businessId, onBookingComplete }: BookingCalend
         clientId = newClient.id;
       }
 
+      // Generate ticket number
+      const ticketNumber = `TKT-${format(new Date(), 'yyyyMMdd')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+
       // Create booking
       const { data, error } = await supabase
         .from('bookings')
@@ -185,6 +188,7 @@ export const BookingCalendar = ({ businessId, onBookingComplete }: BookingCalend
           duration_minutes: selectedService.duration_minutes,
           total_amount: selectedService.price,
           status: 'pending',
+          ticket_number: ticketNumber,
         }])
         .select()
         .single();
