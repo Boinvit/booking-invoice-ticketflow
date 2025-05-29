@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,31 +22,41 @@ export const PesapalPayment = ({ businessId, planId, planName, amount, onSuccess
     mutationFn: async () => {
       setIsProcessing(true);
       
-      // Get auth token
-      const authResponse = await supabase.functions.invoke('pesapal-auth');
-      if (authResponse.error) {
-        throw new Error('Failed to authenticate with payment gateway');
+      try {
+        // Get auth token
+        const authResponse = await supabase.functions.invoke('pesapal-auth');
+        if (authResponse.error) {
+          throw new Error('Failed to authenticate with payment gateway');
+        }
+
+        // Create payment
+        const paymentResponse = await supabase.functions.invoke('pesapal-payment', {
+          body: {
+            businessId,
+            planId,
+            amount,
+            token: authResponse.data.token,
+          },
+        });
+
+        if (paymentResponse.error) {
+          throw new Error('Failed to initiate payment');
+        }
+
+        return paymentResponse.data;
+      } catch (error) {
+        console.error('Payment error:', error);
+        throw error;
       }
-
-      // Create payment
-      const paymentResponse = await supabase.functions.invoke('pesapal-payment', {
-        body: {
-          businessId,
-          planId,
-          amount,
-          token: authResponse.data.token,
-        },
-      });
-
-      if (paymentResponse.error) {
-        throw new Error('Failed to initiate payment');
-      }
-
-      return paymentResponse.data;
     },
     onSuccess: (data) => {
       // Redirect to Pesapal payment page
-      window.location.href = data.redirect_url;
+      if (data?.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        toast.error('Invalid payment response');
+      }
+      onSuccess?.();
     },
     onError: (error) => {
       console.error('Payment error:', error);
