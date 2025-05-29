@@ -6,11 +6,15 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, Star, Zap } from 'lucide-react';
+import { Check, Crown, Star, Zap, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
+import { PesapalPayment } from '@/components/payment/PesapalPayment';
+import { useState } from 'react';
 
 export default function SubscriptionPage() {
   const { user } = useAuth();
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [showPayment, setShowPayment] = useState(false);
 
   const { data: subscriptionPlans, isLoading: plansLoading } = useQuery({
     queryKey: ['subscription-plans'],
@@ -26,18 +30,19 @@ export default function SubscriptionPage() {
     },
   });
 
-  const { data: currentSubscription } = useQuery({
-    queryKey: ['current-subscription', user?.id],
+  const { data: userBusiness } = useQuery({
+    queryKey: ['user-business', user?.id],
     queryFn: async () => {
       if (!user) return null;
       
-      const { data: business } = await supabase
+      const { data, error } = await supabase
         .from('businesses')
-        .select('subscription_plan')
+        .select('id, subscription_plan, subscription_status')
         .eq('user_id', user.id)
         .single();
       
-      return business?.subscription_plan || 'free';
+      if (error) throw error;
+      return data;
     },
     enabled: !!user,
   });
@@ -62,8 +67,22 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handleUpgrade = async (planSlug: string) => {
-    toast.info(`Upgrade to ${planSlug} plan feature coming soon!`);
+  const handleUpgrade = (plan: any) => {
+    if (plan.price_monthly === 0) {
+      toast.info('You are already on the free plan');
+      return;
+    }
+    
+    setSelectedPlan(plan);
+    setShowPayment(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPayment(false);
+    setSelectedPlan(null);
+    toast.success('Subscription activated successfully!');
+    // Refresh queries
+    window.location.reload();
   };
 
   if (plansLoading) {
@@ -76,23 +95,79 @@ export default function SubscriptionPage() {
     );
   }
 
+  if (showPayment && selectedPlan && userBusiness) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Your Payment</h1>
+            <p className="text-gray-600">
+              Upgrade to {selectedPlan.name} plan - KES {selectedPlan.price_monthly.toLocaleString()}/month
+            </p>
+          </div>
+
+          <PesapalPayment
+            businessId={userBusiness.id}
+            planId={selectedPlan.id}
+            planName={selectedPlan.name}
+            amount={selectedPlan.price_monthly}
+            onSuccess={handlePaymentSuccess}
+          />
+
+          <div className="mt-6 text-center">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowPayment(false)}
+            >
+              Back to Plans
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Subscription Plans</h1>
           <p className="text-gray-600">Choose the perfect plan for your business needs</p>
+          
+          {userBusiness?.subscription_status === 'active' && (
+            <div className="mt-4">
+              <Badge className="bg-green-100 text-green-800 border-green-200">
+                <CheckCircle className="h-4 w-4 mr-1" />
+                Active Subscription
+              </Badge>
+            </div>
+          )}
         </div>
+
+        {/* Mobile Money Payment Notice */}
+        <Card className="mb-8 border-green-200 bg-green-50">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Smartphone className="h-6 w-6 text-green-600" />
+              <div>
+                <h3 className="font-medium text-green-800">Mobile Money Payments Available</h3>
+                <p className="text-sm text-green-700">
+                  Pay easily using M-Pesa, Airtel Money, or any Visa/Mastercard
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {subscriptionPlans?.map((plan) => (
             <Card 
               key={plan.id} 
               className={`relative ${getPlanColor(plan.slug)} ${
-                currentSubscription === plan.slug ? 'ring-2 ring-purple-500' : ''
+                userBusiness?.subscription_plan === plan.slug ? 'ring-2 ring-purple-500' : ''
               }`}
             >
-              {currentSubscription === plan.slug && (
+              {userBusiness?.subscription_plan === plan.slug && (
                 <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-purple-600">
                   Current Plan
                 </Badge>
@@ -104,12 +179,12 @@ export default function SubscriptionPage() {
                 </div>
                 <CardTitle className="text-xl">{plan.name}</CardTitle>
                 <div className="text-3xl font-bold text-gray-900">
-                  ${plan.price_monthly}
+                  KES {plan.price_monthly.toLocaleString()}
                   <span className="text-sm font-normal text-gray-600">/month</span>
                 </div>
                 {plan.price_yearly && plan.price_yearly > 0 && (
                   <p className="text-sm text-gray-600">
-                    or ${plan.price_yearly}/year (save 17%)
+                    or KES {plan.price_yearly.toLocaleString()}/year (save 17%)
                   </p>
                 )}
               </CardHeader>
@@ -127,17 +202,24 @@ export default function SubscriptionPage() {
                 </div>
 
                 <div className="pt-4">
-                  {currentSubscription === plan.slug ? (
+                  {userBusiness?.subscription_plan === plan.slug ? (
                     <Button disabled className="w-full">
                       Current Plan
                     </Button>
                   ) : (
                     <Button 
-                      onClick={() => handleUpgrade(plan.slug)}
+                      onClick={() => handleUpgrade(plan)}
                       className="w-full"
                       variant={plan.slug === 'corporate' ? 'default' : 'outline'}
                     >
-                      {plan.price_monthly > 0 ? 'Upgrade' : 'Get Started'}
+                      {plan.price_monthly > 0 ? (
+                        <span className="flex items-center gap-2">
+                          <Smartphone className="h-4 w-4" />
+                          Pay with M-Pesa
+                        </span>
+                      ) : (
+                        'Get Started'
+                      )}
                     </Button>
                   )}
                 </div>

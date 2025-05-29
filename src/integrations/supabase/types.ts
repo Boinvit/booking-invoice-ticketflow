@@ -242,9 +242,12 @@ export type Database = {
           status: Database["public"]["Enums"]["business_status"] | null
           subdomain: string
           subscription_expires_at: string | null
+          subscription_next_billing_date: string | null
           subscription_plan:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
+          subscription_started_at: string | null
+          subscription_status: string | null
           total_reviews: number | null
           updated_at: string
           user_id: string
@@ -266,9 +269,12 @@ export type Database = {
           status?: Database["public"]["Enums"]["business_status"] | null
           subdomain: string
           subscription_expires_at?: string | null
+          subscription_next_billing_date?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
           total_reviews?: number | null
           updated_at?: string
           user_id: string
@@ -290,9 +296,12 @@ export type Database = {
           status?: Database["public"]["Enums"]["business_status"] | null
           subdomain?: string
           subscription_expires_at?: string | null
+          subscription_next_billing_date?: string | null
           subscription_plan?:
             | Database["public"]["Enums"]["subscription_plan"]
             | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
           total_reviews?: number | null
           updated_at?: string
           user_id?: string
@@ -604,6 +613,57 @@ export type Database = {
           name?: string
           slug?: string
           supported_currencies?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          business_id: string
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json | null
+          payment_date: string | null
+          payment_method: string
+          pesapal_merchant_reference: string
+          pesapal_order_tracking_id: string | null
+          pesapal_tracking_id: string | null
+          status: string
+          subscription_plan_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          business_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          payment_date?: string | null
+          payment_method: string
+          pesapal_merchant_reference: string
+          pesapal_order_tracking_id?: string | null
+          pesapal_tracking_id?: string | null
+          status?: string
+          subscription_plan_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          business_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          payment_date?: string | null
+          payment_method?: string
+          pesapal_merchant_reference?: string
+          pesapal_order_tracking_id?: string | null
+          pesapal_tracking_id?: string | null
+          status?: string
+          subscription_plan_id?: string | null
           updated_at?: string
         }
         Relationships: []
