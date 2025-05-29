@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,15 +5,27 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, Star, Zap, Smartphone } from 'lucide-react';
+import { Check, Crown, Star, Zap, Smartphone, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { PesapalPayment } from '@/components/payment/PesapalPayment';
+import { PaymentSuccess } from '@/components/payment/PaymentSuccess';
 import { useState } from 'react';
+
+interface SubscriptionPlan {
+  id: string;
+  name: string;
+  slug: string;
+  price_monthly: number;
+  price_yearly?: number;
+  description: string;
+  features: string[];
+}
 
 export default function SubscriptionPage() {
   const { user } = useAuth();
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [showPayment, setShowPayment] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const { data: subscriptionPlans, isLoading: plansLoading } = useQuery({
     queryKey: ['subscription-plans'],
@@ -26,7 +37,7 @@ export default function SubscriptionPage() {
         .order('price_monthly');
       
       if (error) throw error;
-      return data;
+      return data as SubscriptionPlan[];
     },
   });
 
@@ -67,7 +78,7 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handleUpgrade = (plan: any) => {
+  const handleUpgrade = (plan: SubscriptionPlan) => {
     if (plan.price_monthly === 0) {
       toast.info('You are already on the free plan');
       return;
@@ -79,6 +90,11 @@ export default function SubscriptionPage() {
 
   const handlePaymentSuccess = () => {
     setShowPayment(false);
+    setShowSuccess(true);
+  };
+
+  const handleContinueAfterSuccess = () => {
+    setShowSuccess(false);
     setSelectedPlan(null);
     toast.success('Subscription activated successfully!');
     // Refresh queries
@@ -90,6 +106,16 @@ export default function SubscriptionPage() {
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-96">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (showSuccess) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-2xl mx-auto">
+          <PaymentSuccess onContinue={handleContinueAfterSuccess} />
         </div>
       </DashboardLayout>
     );
