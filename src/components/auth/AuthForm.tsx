@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export const AuthForm = () => {
   const { signIn, signUp } = useAuth();
@@ -14,18 +15,30 @@ export const AuthForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setAuthError(null);
+    
     try {
       const { error } = await signIn(email, password);
       if (error) {
-        toast.error(error.message);
+        if (error.message.includes('Invalid login credentials')) {
+          setAuthError('Invalid email or password. Please check your credentials and try again.');
+        } else if (error.message.includes('Email not confirmed')) {
+          setAuthError('Please check your email and click the confirmation link before signing in.');
+        } else {
+          setAuthError(error.message);
+        }
+        toast.error('Sign in failed');
       } else {
         toast.success('Welcome back!');
+        setAuthError(null);
       }
     } catch (error) {
+      setAuthError('An unexpected error occurred. Please try again.');
       toast.error('An error occurred during sign in');
     } finally {
       setLoading(false);
@@ -35,14 +48,25 @@ export const AuthForm = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setAuthError(null);
+    
     try {
       const { error } = await signUp(email, password);
       if (error) {
-        toast.error(error.message);
+        if (error.message.includes('User already registered')) {
+          setAuthError('An account with this email already exists. Please sign in instead.');
+        } else if (error.message.includes('Password should be at least')) {
+          setAuthError('Password must be at least 6 characters long.');
+        } else {
+          setAuthError(error.message);
+        }
+        toast.error('Sign up failed');
       } else {
-        toast.success('Check your email for the confirmation link!');
+        toast.success('Account created! Check your email for the confirmation link.');
+        setAuthError(null);
       }
     } catch (error) {
+      setAuthError('An unexpected error occurred. Please try again.');
       toast.error('An error occurred during sign up');
     } finally {
       setLoading(false);
@@ -53,6 +77,10 @@ export const AuthForm = () => {
     setShowPassword(!showPassword);
   };
 
+  const clearError = () => {
+    setAuthError(null);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md">
@@ -61,7 +89,14 @@ export const AuthForm = () => {
           <CardDescription>Your complete booking management solution</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
+          {authError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{authError}</AlertDescription>
+            </Alert>
+          )}
+          
+          <Tabs defaultValue="signin" className="w-full" onValueChange={clearError}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -76,7 +111,10 @@ export const AuthForm = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (authError) setAuthError(null);
+                    }}
                     required
                   />
                 </div>
@@ -88,7 +126,10 @@ export const AuthForm = () => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (authError) setAuthError(null);
+                      }}
                       required
                     />
                     <button
@@ -103,6 +144,9 @@ export const AuthForm = () => {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
+                <p className="text-sm text-gray-600 text-center">
+                  Don't have an account? Switch to the Sign Up tab above.
+                </p>
               </form>
             </TabsContent>
             
@@ -115,7 +159,10 @@ export const AuthForm = () => {
                     type="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (authError) setAuthError(null);
+                    }}
                     required
                   />
                 </div>
@@ -125,10 +172,14 @@ export const AuthForm = () => {
                     <Input
                       id="signup-password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Create a password"
+                      placeholder="Create a password (min. 6 characters)"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (authError) setAuthError(null);
+                      }}
                       required
+                      minLength={6}
                     />
                     <button
                       type="button"
@@ -142,6 +193,9 @@ export const AuthForm = () => {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Creating account...' : 'Create Account'}
                 </Button>
+                <p className="text-sm text-gray-600 text-center">
+                  Already have an account? Switch to the Sign In tab above.
+                </p>
               </form>
             </TabsContent>
           </Tabs>
