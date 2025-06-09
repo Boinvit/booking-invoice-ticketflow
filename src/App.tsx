@@ -32,22 +32,38 @@ const AppContent = () => {
     );
   }
 
-  if (!user) {
-    return <AuthForm />;
-  }
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AuthenticatedApp />} />
-        <Route path="/dashboard" element={<AuthenticatedApp />} />
-        <Route path="/booking" element={<BookingPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/subscription" element={<SubscriptionPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/invoice" element={<InvoiceGenerator />} />
+        {/* Public routes - accessible without authentication */}
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<AuthForm />} />
+        <Route path="/signup" element={<AuthForm />} />
         <Route path="/public/:subdomain" element={<Index />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        
+        {/* Protected routes - require authentication */}
+        {user ? (
+          <>
+            <Route path="/dashboard" element={<AuthenticatedApp />} />
+            <Route path="/booking" element={<BookingPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/subscription" element={<SubscriptionPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/invoice" element={<InvoiceGenerator />} />
+          </>
+        ) : (
+          <>
+            {/* Redirect authenticated routes to login */}
+            <Route path="/dashboard" element={<AuthForm />} />
+            <Route path="/booking" element={<AuthForm />} />
+            <Route path="/services" element={<AuthForm />} />
+            <Route path="/subscription" element={<AuthForm />} />
+            <Route path="/settings" element={<AuthForm />} />
+            <Route path="/invoice" element={<AuthForm />} />
+          </>
+        )}
+        
+        {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
