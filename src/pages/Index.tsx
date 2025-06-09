@@ -2,10 +2,47 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowDown, ArrowUp, Ticket, Youtube } from "lucide-react";
+import { 
+  ArrowDown, 
+  ArrowUp, 
+  Ticket, 
+  Youtube, 
+  Plane, 
+  Car, 
+  Scissors, 
+  Stethoscope, 
+  Package, 
+  Spa,
+  QrCode,
+  Star,
+  Check,
+  Zap,
+  Shield,
+  Globe
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { useEffect, useState } from "react";
+
+const businessTypes = [
+  { icon: Car, name: "Transport Services", desc: "Taxi, Bus & Ride Booking" },
+  { icon: Package, name: "Courier & Logistics", desc: "Parcel & Delivery Services" },
+  { icon: Scissors, name: "Beauty & Wellness", desc: "Salons, Spas & Barbershops" },
+  { icon: Spa, name: "Massage Therapy", desc: "Wellness & Therapeutic Services" },
+  { icon: Stethoscope, name: "Healthcare", desc: "Clinics & Medical Appointments" },
+  { icon: Plane, name: "Travel & Tourism", desc: "Air Tickets & Travel Booking" },
+];
 
 const Index = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % businessTypes.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Hero Section */}
@@ -20,111 +57,212 @@ const Index = () => {
               <Button variant="outline">Sign In</Button>
             </Link>
             <Link to="/signup">
-              <Button>Get Started</Button>
+              <Button>Get Started Free</Button>
             </Link>
           </div>
         </nav>
 
-        <div className="text-center max-w-4xl mx-auto">
-          <Badge className="mb-4 bg-blue-100 text-blue-800 hover:bg-blue-100">
-            SaaS for Service Businesses
+        <div className="text-center max-w-5xl mx-auto">
+          <Badge className="mb-6 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 hover:bg-blue-100">
+            <Star className="w-4 h-4 mr-1" />
+            Trusted by 10,000+ Service Businesses
           </Badge>
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Streamline Your Business with
-            <span className="text-blue-600"> Smart Booking & Invoicing</span>
+          <h1 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Complete Business Solution for
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Service Industries</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            Complete solution for barbershops, salons, taxi services, massage parlours and more. 
-            Get custom booking pages, automated invoicing, and seamless client communication.
+          <p className="text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
+            From transport and logistics to beauty and healthcare - BookFlow powers booking, invoicing, and ticketing for diverse service businesses. Generate QR codes, accept payments, and delight customers with our all-in-one platform.
           </p>
-          <div className="space-x-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/signup">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                Start Free Trial
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4">
+                <Zap className="mr-2 h-5 w-5" />
+                Start Free Trial - No Credit Card
               </Button>
             </Link>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="px-8 py-4">
               <Youtube className="mr-2 h-4 w-4" />
-              Watch Demo
+              Watch 2-Min Demo
             </Button>
           </div>
         </div>
       </header>
 
+      {/* Sliding Business Types Showcase */}
+      <section className="py-16 bg-white overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Trusted Across All Service Industries
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              From small local businesses to enterprise operations, BookFlow adapts to your industry needs
+            </p>
+          </div>
+          
+          <div className="relative">
+            <div className="flex animate-[slide-in-right_20s_linear_infinite] space-x-8">
+              {[...businessTypes, ...businessTypes].map((business, index) => (
+                <Card key={index} className="min-w-[300px] border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50">
+                  <CardHeader className="text-center pb-4">
+                    <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
+                      <business.icon className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <CardTitle className="text-xl text-gray-900">{business.name}</CardTitle>
+                    <CardDescription className="text-gray-600">{business.desc}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <Badge variant="outline" className="text-blue-600 border-blue-200">
+                      <Check className="w-3 h-3 mr-1" />
+                      Active Businesses: 500+
+                    </Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Unique QR Code Feature Highlight */}
+      <section className="py-16 bg-gradient-to-r from-purple-50 to-blue-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-purple-100 text-purple-800">
+              <QrCode className="w-4 h-4 mr-2" />
+              Exclusive Feature
+            </Badge>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Revolutionary QR Code Business Profiles
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              The only platform that generates unique QR codes for your business. Customers simply scan to access your booking page, services, and make instant payments.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            <div>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <QrCode className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Instant Access</h3>
+                    <p className="text-gray-600">Customers scan your QR code and immediately access your full business profile</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Globe className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">No App Downloads</h3>
+                    <p className="text-gray-600">Works with any smartphone camera - no additional apps required</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Secure & Fast</h3>
+                    <p className="text-gray-600">Encrypted QR codes with instant booking and payment processing</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="bg-white p-8 rounded-xl shadow-2xl inline-block">
+                <QrCode className="w-32 h-32 text-gray-800 mx-auto mb-4" />
+                <p className="text-sm text-gray-600 mb-2">Sample QR Code</p>
+                <Badge className="bg-green-100 text-green-800">
+                  Scan with your phone camera
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Core Features Section */}
       <section className="container mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Three Core Solutions for Your Business
+            Everything You Need to Scale Your Business
           </h2>
           <p className="text-lg text-gray-600">
-            Everything you need to manage bookings, generate invoices, and delight customers
+            Professional tools that work seamlessly across all service industries
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Booking System */}
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all">
+          {/* Smart Booking System */}
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all group">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <ArrowDown className="h-8 w-8 text-green-600" />
               </div>
               <CardTitle className="text-xl">Smart Booking System</CardTitle>
               <CardDescription>
-                Custom booking pages for your clients with your business branding
+                Industry-specific booking pages with your business branding
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>• Custom subdomain: yourname.bookflow.com</li>
-                <li>• Mobile-first booking interface</li>
                 <li>• Service selection & staff assignment</li>
+                <li>• Real-time availability tracking</li>
                 <li>• WhatsApp/SMS confirmations</li>
-                <li>• Calendar integration</li>
+                <li>• Calendar integration & sync</li>
+                <li>• QR code instant booking</li>
               </ul>
             </CardContent>
           </Card>
 
-          {/* Invoice Generator */}
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all">
+          {/* Professional Invoicing */}
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all group">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <ArrowUp className="h-8 w-8 text-blue-600" />
               </div>
-              <CardTitle className="text-xl">Invoice Generator</CardTitle>
+              <CardTitle className="text-xl">Professional Invoicing</CardTitle>
               <CardDescription>
-                Professional invoices and receipts with your business branding
+                Automated invoices with payment tracking and reminders
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>• Auto-generate after bookings</li>
-                <li>• Custom business logo & details</li>
-                <li>• Send via WhatsApp/Email</li>
-                <li>• Downloadable PDF format</li>
-                <li>• Payment tracking</li>
+                <li>• Custom business branding</li>
+                <li>• Multiple payment methods</li>
+                <li>• Automated follow-ups</li>
+                <li>• Tax calculation & reports</li>
+                <li>• Digital receipt delivery</li>
               </ul>
             </CardContent>
           </Card>
 
-          {/* Ticketing System */}
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all">
+          {/* Digital Ticketing */}
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all group">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Ticket className="h-8 w-8 text-purple-600" />
               </div>
               <CardTitle className="text-xl">Digital Ticketing</CardTitle>
               <CardDescription>
-                QR code tickets and service confirmations for your clients
+                QR code tickets with real-time validation and tracking
               </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li>• QR code service tickets</li>
                 <li>• Digital check-in system</li>
-                <li>• Service confirmation</li>
-                <li>• Client service history</li>
-                <li>• Appointment reminders</li>
+                <li>• Anti-fraud validation</li>
+                <li>• Customer service history</li>
+                <li>• Automated reminders</li>
+                <li>• Analytics & reporting</li>
               </ul>
             </CardContent>
           </Card>
