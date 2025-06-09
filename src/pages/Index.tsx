@@ -50,7 +50,7 @@ const Index = () => {
         <nav className="flex justify-between items-center mb-16">
           <div className="flex items-center space-x-2">
             <Ticket className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">BookFlow</span>
+            <span className="text-2xl font-bold text-gray-900">Boinvit</span>
           </div>
           <div className="space-x-4">
             <Link to="/login">
@@ -65,14 +65,14 @@ const Index = () => {
         <div className="text-center max-w-5xl mx-auto">
           <Badge className="mb-6 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 hover:bg-blue-100">
             <Star className="w-4 h-4 mr-1" />
-            Trusted by 10,000+ Service Businesses
+            Trusted by 10,000+ Service Businesses Globally
           </Badge>
           <h1 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">
             Complete Business Solution for
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Service Industries</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
-            From transport and logistics to beauty and healthcare - BookFlow powers booking, invoicing, and ticketing for diverse service businesses. Generate QR codes, accept payments, and delight customers with our all-in-one platform.
+            From transport and logistics to beauty and healthcare - Boinvit powers booking, invoicing, and ticketing for diverse service businesses worldwide. Generate QR codes, accept payments, and delight customers with our all-in-one platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/signup">
@@ -94,10 +94,10 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Trusted Across All Service Industries
+              Trusted Across All Service Industries Worldwide
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              From small local businesses to enterprise operations, BookFlow adapts to your industry needs
+              From small local businesses to enterprise operations across 50+ countries, Boinvit adapts to your industry needs
             </p>
           </div>
           
@@ -190,10 +190,10 @@ const Index = () => {
       <section className="container mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Everything You Need to Scale Your Business
+            Everything You Need to Scale Your Business Globally
           </h2>
           <p className="text-lg text-gray-600">
-            Professional tools that work seamlessly across all service industries
+            Professional tools that work seamlessly across all service industries and countries
           </p>
         </div>
 
@@ -211,7 +211,7 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Custom subdomain: yourname.bookflow.com</li>
+                <li>• Custom subdomain: yourname.boinvit.com</li>
                 <li>• Service selection & staff assignment</li>
                 <li>• Real-time availability tracking</li>
                 <li>• WhatsApp/SMS confirmations</li>
@@ -274,7 +274,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              How BookFlow Works
+              How Boinvit Works
             </h2>
             <p className="text-lg text-gray-600">
               Simple setup, powerful results for your business
@@ -375,10 +375,10 @@ const Index = () => {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Ticket className="h-6 w-6" />
-                <span className="text-xl font-bold">BookFlow</span>
+                <span className="text-xl font-bold">Boinvit</span>
               </div>
               <p className="text-gray-400">
-                Streamlining service businesses with smart booking and invoicing solutions.
+                Streamlining service businesses worldwide with smart booking and invoicing solutions.
               </p>
             </div>
             <div>
@@ -390,6 +390,15 @@ const Index = () => {
               </ul>
             </div>
             <div>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link to="/privacy">Privacy Policy</Link></li>
+                <li><Link to="/terms">Terms of Service</Link></li>
+                <li><Link to="/cookies">Cookie Policy</Link></li>
+                <li><Link to="/safety">Safety Tips</Link></li>
+              </ul>
+            </div>
+            <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/help">Help Center</Link></li>
@@ -397,17 +406,9 @@ const Index = () => {
                 <li><Link to="/api">API Docs</Link></li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/about">About</Link></li>
-                <li><Link to="/privacy">Privacy</Link></li>
-                <li><Link to="/terms">Terms</Link></li>
-              </ul>
-            </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 BookFlow. All rights reserved.</p>
+            <p>&copy; 2025 Boinvit. All rights reserved.</p>
           </div>
         </div>
       </footer>

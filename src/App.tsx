@@ -15,6 +15,10 @@ import SettingsPage from "./pages/SettingsPage";
 import ServicesPage from "./pages/ServicesPage";
 import InvoiceGenerator from "./components/InvoiceGenerator";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
+import SafetyTips from "./pages/SafetyTips";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +44,10 @@ const AppContent = () => {
         <Route path="/login" element={<AuthForm />} />
         <Route path="/signup" element={<AuthForm />} />
         <Route path="/public/:subdomain" element={<Index />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/cookies" element={<CookiePolicy />} />
+        <Route path="/safety" element={<SafetyTips />} />
         
         {/* Protected routes - require authentication */}
         {user ? (
