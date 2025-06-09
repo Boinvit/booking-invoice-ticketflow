@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,14 +30,16 @@ export const CapacitySettings = ({ businessId }: CapacitySettingsProps) => {
       
       if (error) throw error;
       return data;
-    },
-    onSuccess: (data) => {
-      if (data) {
-        setMaxBookings(data.max_bookings_per_slot || 5);
-        setSlotDuration(data.booking_slot_duration_minutes || 30);
-      }
     }
   });
+
+  // Update state when data is fetched
+  useEffect(() => {
+    if (settings) {
+      setMaxBookings(settings.max_bookings_per_slot || 5);
+      setSlotDuration(settings.booking_slot_duration_minutes || 30);
+    }
+  }, [settings]);
 
   // Update settings mutation
   const updateSettingsMutation = useMutation({
