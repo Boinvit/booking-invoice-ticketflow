@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -90,7 +91,7 @@ export const AuthForm = () => {
         </CardHeader>
         <CardContent>
           {authError && (
-            <Alert variant="destructive\" className="mb-4">
+            <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{authError}</AlertDescription>
             </Alert>

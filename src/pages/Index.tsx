@@ -12,7 +12,7 @@ import {
   Scissors, 
   Stethoscope, 
   Package, 
-  Spa,
+  Sparkles,
   QrCode,
   Star,
   Check,
@@ -28,7 +28,7 @@ const businessTypes = [
   { icon: Car, name: "Transport Services", desc: "Taxi, Bus & Ride Booking" },
   { icon: Package, name: "Courier & Logistics", desc: "Parcel & Delivery Services" },
   { icon: Scissors, name: "Beauty & Wellness", desc: "Salons, Spas & Barbershops" },
-  { icon: Spa, name: "Massage Therapy", desc: "Wellness & Therapeutic Services" },
+  { icon: Sparkles, name: "Massage Therapy", desc: "Wellness & Therapeutic Services" },
   { icon: Stethoscope, name: "Healthcare", desc: "Clinics & Medical Appointments" },
   { icon: Plane, name: "Travel & Tourism", desc: "Air Tickets & Travel Booking" },
 ];
