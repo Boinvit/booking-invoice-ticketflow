@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      blocked_time_slots: {
+        Row: {
+          blocked_date: string
+          blocked_time: string
+          business_id: string
+          created_at: string | null
+          id: string
+          reason: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          blocked_date: string
+          blocked_time: string
+          business_id: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          blocked_date?: string
+          blocked_time?: string
+          business_id?: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_time_slots_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           booking_date: string
@@ -174,11 +212,13 @@ export type Database = {
           auto_confirm_bookings: boolean | null
           booking_advance_days: number | null
           booking_buffer_minutes: number | null
+          booking_slot_duration_minutes: number | null
           business_id: string
           created_at: string
           currency: string | null
           default_tax_rate: number | null
           id: string
+          max_bookings_per_slot: number | null
           notification_preferences: Json | null
           reminder_hours_before: number | null
           send_reminders: boolean | null
@@ -189,11 +229,13 @@ export type Database = {
           auto_confirm_bookings?: boolean | null
           booking_advance_days?: number | null
           booking_buffer_minutes?: number | null
+          booking_slot_duration_minutes?: number | null
           business_id: string
           created_at?: string
           currency?: string | null
           default_tax_rate?: number | null
           id?: string
+          max_bookings_per_slot?: number | null
           notification_preferences?: Json | null
           reminder_hours_before?: number | null
           send_reminders?: boolean | null
@@ -204,11 +246,13 @@ export type Database = {
           auto_confirm_bookings?: boolean | null
           booking_advance_days?: number | null
           booking_buffer_minutes?: number | null
+          booking_slot_duration_minutes?: number | null
           business_id?: string
           created_at?: string
           currency?: string | null
           default_tax_rate?: number | null
           id?: string
+          max_bookings_per_slot?: number | null
           notification_preferences?: Json | null
           reminder_hours_before?: number | null
           send_reminders?: boolean | null
@@ -874,9 +918,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_booking_count_for_slot: {
+        Args: { p_business_id: string; p_date: string; p_time: string }
+        Returns: number
+      }
       get_user_business_ids: {
         Args: { user_uuid: string }
         Returns: string[]
+      }
+      is_time_slot_available: {
+        Args: { p_business_id: string; p_date: string; p_time: string }
+        Returns: boolean
       }
     }
     Enums: {
