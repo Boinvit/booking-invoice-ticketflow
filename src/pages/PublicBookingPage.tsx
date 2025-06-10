@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { BookingCalendar } from '@/components/booking/BookingCalendar';
+import { ReviewDisplay } from '@/components/reviews/ReviewDisplay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Ticket, MapPin, Phone, Mail, Star, Clock } from 'lucide-react';
@@ -46,16 +47,23 @@ const PublicBookingPage = () => {
     enabled: !!business?.id,
   });
 
-  // Fetch business reviews
+  // Fetch business reviews with client names
   const { data: reviews } = useQuery({
     queryKey: ['public-reviews', business?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('business_reviews')
-        .select('*')
+        .select(`
+          *,
+          bookings (
+            clients (
+              name
+            )
+          )
+        `)
         .eq('business_id', business.id)
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(10);
       
       if (error) throw error;
       return data;
@@ -148,7 +156,7 @@ const PublicBookingPage = () => {
       <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Services List */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Our Services</CardTitle>
@@ -181,37 +189,18 @@ const PublicBookingPage = () => {
             </Card>
 
             {/* Reviews */}
-            {reviews && reviews.length > 0 && (
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle>Recent Reviews</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {reviews.slice(0, 3).map((review) => (
-                    <div key={review.id} className="border-b last:border-b-0 pb-3 last:pb-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-3 w-3 ${
-                                i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500">
-                          {new Date(review.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                      {review.comment && (
-                        <p className="text-sm text-gray-600 line-clamp-3">{review.comment}</p>
-                      )}
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
+            <Card>
+              <CardHeader>
+                <CardTitle>Customer Reviews</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ReviewDisplay 
+                  reviews={reviews || []} 
+                  averageRating={business.average_rating}
+                  totalReviews={business.total_reviews}
+                />
+              </CardContent>
+            </Card>
           </div>
 
           {/* Booking Calendar */}

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { QrCode, Copy, Download, Share2 } from 'lucide-react';
+import { QrCode, Copy, Download, Share2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const QRCodeGenerator = () => {
@@ -54,7 +54,7 @@ export const QRCodeGenerator = () => {
   const downloadQR = () => {
     const link = document.createElement('a');
     link.href = qrApiUrl;
-    link.download = `${business.name}-booking-qr.png`;
+    link.download = `${business.name.replace(/\s+/g, '-').toLowerCase()}-booking-qr.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -75,6 +75,10 @@ export const QRCodeGenerator = () => {
     } else {
       copyToClipboard(bookingUrl);
     }
+  };
+
+  const testBookingPage = () => {
+    window.open(bookingUrl, '_blank');
   };
 
   return (
@@ -119,16 +123,21 @@ export const QRCodeGenerator = () => {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button onClick={downloadQR} className="flex-1">
+          <div className="grid grid-cols-2 gap-2">
+            <Button onClick={downloadQR} variant="outline">
               <Download className="h-4 w-4 mr-2" />
               Download QR
             </Button>
-            <Button variant="outline" onClick={shareQR} className="flex-1">
+            <Button onClick={shareQR} variant="outline">
               <Share2 className="h-4 w-4 mr-2" />
               Share
             </Button>
           </div>
+
+          <Button onClick={testBookingPage} className="w-full">
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Test Booking Page
+          </Button>
         </CardContent>
       </Card>
 
@@ -149,7 +158,7 @@ export const QRCodeGenerator = () => {
           <p className="text-sm text-gray-600 mt-4">
             Customers can scan this QR code to book appointments directly
           </p>
-          <div className="text-xs text-gray-500 mt-2">
+          <div className="text-xs text-gray-500 mt-2 break-all">
             {business.name} • {bookingUrl}
           </div>
         </CardContent>

@@ -2,6 +2,9 @@
 import React from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { QRCodeGenerator } from '@/components/qr/QRCodeGenerator';
+import { BusinessSettings } from '@/components/settings/BusinessSettings';
+import { NotificationSettings } from '@/components/settings/NotificationSettings';
+import { GeneralSettings } from '@/components/settings/GeneralSettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Settings, QrCode, User, Bell } from 'lucide-react';
 
@@ -39,21 +42,15 @@ const SettingsPage = () => {
           </TabsContent>
 
           <TabsContent value="business">
-            <div className="text-center py-12 text-gray-500">
-              Business settings coming soon...
-            </div>
+            <BusinessSettings />
           </TabsContent>
 
           <TabsContent value="notifications">
-            <div className="text-center py-12 text-gray-500">
-              Notification settings coming soon...
-            </div>
+            <NotificationSettings />
           </TabsContent>
 
           <TabsContent value="general">
-            <div className="text-center py-12 text-gray-500">
-              General settings coming soon...
-            </div>
+            <GeneralSettings />
           </TabsContent>
         </Tabs>
       </div>
