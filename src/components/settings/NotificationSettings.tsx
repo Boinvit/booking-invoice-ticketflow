@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -55,19 +54,21 @@ export const NotificationSettings = () => {
       return data;
     },
     enabled: !!business,
-    onSuccess: (data) => {
-      if (data) {
-        setSettings({
-          send_reminders: data.send_reminders ?? true,
-          reminder_hours_before: data.reminder_hours_before ?? 24,
-          auto_confirm_bookings: data.auto_confirm_bookings ?? false,
-          email_notifications: data.notification_preferences?.email ?? true,
-          sms_notifications: data.notification_preferences?.sms ?? true,
-          whatsapp_notifications: data.notification_preferences?.whatsapp ?? false,
-        });
-      }
-    },
   });
+
+  // Use useEffect to handle data updates instead of onSuccess
+  useEffect(() => {
+    if (businessSettings) {
+      setSettings({
+        send_reminders: businessSettings.send_reminders ?? true,
+        reminder_hours_before: businessSettings.reminder_hours_before ?? 24,
+        auto_confirm_bookings: businessSettings.auto_confirm_bookings ?? false,
+        email_notifications: businessSettings.notification_preferences?.email ?? true,
+        sms_notifications: businessSettings.notification_preferences?.sms ?? true,
+        whatsapp_notifications: businessSettings.notification_preferences?.whatsapp ?? false,
+      });
+    }
+  }, [businessSettings]);
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (updatedSettings: typeof settings) => {

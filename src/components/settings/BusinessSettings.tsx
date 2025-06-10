@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,21 +39,23 @@ export const BusinessSettings = () => {
       return data;
     },
     enabled: !!user,
-    onSuccess: (data) => {
-      if (data) {
-        setFormData({
-          name: data.name || '',
-          description: data.description || '',
-          phone: data.phone || '',
-          email: data.email || '',
-          address: data.address || '',
-          city: data.city || '',
-          country: data.country || '',
-          website: data.website || '',
-        });
-      }
-    },
   });
+
+  // Use useEffect to handle data updates instead of onSuccess
+  useEffect(() => {
+    if (business) {
+      setFormData({
+        name: business.name || '',
+        description: business.description || '',
+        phone: business.phone || '',
+        email: business.email || '',
+        address: business.address || '',
+        city: business.city || '',
+        country: business.country || '',
+        website: business.website || '',
+      });
+    }
+  }, [business]);
 
   const updateBusinessMutation = useMutation({
     mutationFn: async (updatedData: typeof formData) => {

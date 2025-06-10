@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -56,20 +55,22 @@ export const GeneralSettings = () => {
       return data;
     },
     enabled: !!business,
-    onSuccess: (data) => {
-      if (data) {
-        setSettings({
-          timezone: data.timezone || 'UTC',
-          currency: data.currency || 'USD',
-          booking_advance_days: data.booking_advance_days || 30,
-          booking_buffer_minutes: data.booking_buffer_minutes || 15,
-          max_bookings_per_slot: data.max_bookings_per_slot || 5,
-          booking_slot_duration_minutes: data.booking_slot_duration_minutes || 30,
-          default_tax_rate: data.default_tax_rate || 0,
-        });
-      }
-    },
   });
+
+  // Use useEffect to handle data updates instead of onSuccess
+  useEffect(() => {
+    if (businessSettings) {
+      setSettings({
+        timezone: businessSettings.timezone || 'UTC',
+        currency: businessSettings.currency || 'USD',
+        booking_advance_days: businessSettings.booking_advance_days || 30,
+        booking_buffer_minutes: businessSettings.booking_buffer_minutes || 15,
+        max_bookings_per_slot: businessSettings.max_bookings_per_slot || 5,
+        booking_slot_duration_minutes: businessSettings.booking_slot_duration_minutes || 30,
+        default_tax_rate: businessSettings.default_tax_rate || 0,
+      });
+    }
+  }, [businessSettings]);
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (updatedSettings: typeof settings) => {
