@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+
+interface NotificationPreferences {
+  email?: boolean;
+  sms?: boolean;
+  whatsapp?: boolean;
+}
 
 export const NotificationSettings = () => {
   const { user } = useAuth();
@@ -59,13 +66,29 @@ export const NotificationSettings = () => {
   // Use useEffect to handle data updates instead of onSuccess
   useEffect(() => {
     if (businessSettings) {
+      // Safely parse notification preferences
+      let notificationPrefs: NotificationPreferences = {};
+      
+      if (businessSettings.notification_preferences) {
+        try {
+          if (typeof businessSettings.notification_preferences === 'string') {
+            notificationPrefs = JSON.parse(businessSettings.notification_preferences);
+          } else if (typeof businessSettings.notification_preferences === 'object') {
+            notificationPrefs = businessSettings.notification_preferences as NotificationPreferences;
+          }
+        } catch (error) {
+          console.error('Error parsing notification preferences:', error);
+          notificationPrefs = {};
+        }
+      }
+
       setSettings({
         send_reminders: businessSettings.send_reminders ?? true,
         reminder_hours_before: businessSettings.reminder_hours_before ?? 24,
         auto_confirm_bookings: businessSettings.auto_confirm_bookings ?? false,
-        email_notifications: businessSettings.notification_preferences?.email ?? true,
-        sms_notifications: businessSettings.notification_preferences?.sms ?? true,
-        whatsapp_notifications: businessSettings.notification_preferences?.whatsapp ?? false,
+        email_notifications: notificationPrefs.email ?? true,
+        sms_notifications: notificationPrefs.sms ?? true,
+        whatsapp_notifications: notificationPrefs.whatsapp ?? false,
       });
     }
   }, [businessSettings]);
