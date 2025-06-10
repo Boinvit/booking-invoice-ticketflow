@@ -81,6 +81,15 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
     enabled: !!business,
   });
 
+  const generateInvoiceNumber = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `INV-${year}${month}${day}-${random}`;
+  };
+
   const createInvoiceMutation = useMutation({
     mutationFn: async (data: any) => {
       if (!business || !selectedClient) {
@@ -90,12 +99,13 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
       const invoiceData = {
         business_id: business.id,
         client_id: selectedClient,
+        invoice_number: invoice?.invoice_number || generateInvoiceNumber(),
         subtotal: Number(data.subtotal),
         tax_amount: Number(data.tax_amount),
         total_amount: Number(data.total_amount),
         due_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
         notes: data.notes,
-        status: 'draft',
+        status: 'draft' as const,
       };
 
       if (invoice) {
