@@ -1,0 +1,252 @@
+
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { BookingCalendar } from '@/components/booking/BookingCalendar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Ticket, MapPin, Phone, Mail, Star, Clock } from 'lucide-react';
+import { toast } from 'sonner';
+
+const PublicBookingPage = () => {
+  const { subdomain } = useParams();
+  const [selectedService, setSelectedService] = useState(null);
+
+  // Fetch business by subdomain
+  const { data: business, isLoading: businessLoading } = useQuery({
+    queryKey: ['public-business', subdomain],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('*')
+        .eq('subdomain', subdomain)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!subdomain,
+  });
+
+  // Fetch business services
+  const { data: services } = useQuery({
+    queryKey: ['public-services', business?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('business_id', business.id)
+        .eq('is_active', true)
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!business?.id,
+  });
+
+  // Fetch business reviews
+  const { data: reviews } = useQuery({
+    queryKey: ['public-reviews', business?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('business_reviews')
+        .select('*')
+        .eq('business_id', business.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!business?.id,
+  });
+
+  if (businessLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading business information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!business) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Business Not Found</h1>
+          <p className="text-gray-600">The business you're looking for doesn't exist or is no longer available.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleBookingComplete = () => {
+    toast.success('Booking created successfully! You will receive a confirmation shortly.');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Business Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+              {business.logo_url ? (
+                <img src={business.logo_url} alt={business.name} className="w-16 h-16 rounded-full object-cover" />
+              ) : (
+                <Ticket className="w-8 h-8 text-white" />
+              )}
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">{business.name}</h1>
+              {business.description && (
+                <p className="text-gray-600 mt-1">{business.description}</p>
+              )}
+              <div className="flex items-center space-x-4 mt-2">
+                <Badge variant="outline" className="bg-green-50 text-green-700">
+                  {business.status === 'active' ? 'Open' : 'Closed'}
+                </Badge>
+                {business.average_rating && (
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span className="text-sm font-medium">{business.average_rating}</span>
+                    <span className="text-sm text-gray-500">({business.total_reviews} reviews)</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+            {business.address && (
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                {business.address}, {business.city}, {business.country}
+              </div>
+            )}
+            {business.phone && (
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                {business.phone}
+              </div>
+            )}
+            {business.email && (
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                {business.email}
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Services List */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Our Services</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {services?.map((service) => (
+                  <div
+                    key={service.id}
+                    className={`p-3 border rounded-lg cursor-pointer transition-all hover:shadow-sm ${
+                      selectedService?.id === service.id
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setSelectedService(service)}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-medium text-sm">{service.name}</h3>
+                      <Badge variant="outline">${service.price}</Badge>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                      <Clock className="h-3 w-3" />
+                      {service.duration_minutes} min
+                    </div>
+                    {service.description && (
+                      <p className="text-xs text-gray-500 mt-2 line-clamp-2">{service.description}</p>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Reviews */}
+            {reviews && reviews.length > 0 && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>Recent Reviews</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {reviews.slice(0, 3).map((review) => (
+                    <div key={review.id} className="border-b last:border-b-0 pb-3 last:pb-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="flex">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3 w-3 ${
+                                i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {review.comment && (
+                        <p className="text-sm text-gray-600 line-clamp-3">{review.comment}</p>
+                      )}
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Booking Calendar */}
+          <div className="lg:col-span-3">
+            {selectedService ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Book {selectedService.name}</CardTitle>
+                  <p className="text-sm text-gray-600">
+                    Duration: {selectedService.duration_minutes} minutes • Price: ${selectedService.price}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <BookingCalendar 
+                    businessId={business.id} 
+                    onBookingComplete={handleBookingComplete}
+                  />
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="text-center py-12">
+                  <Ticket className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Select a Service</h3>
+                  <p className="text-gray-600">
+                    Choose a service from the list to start booking your appointment.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PublicBookingPage;

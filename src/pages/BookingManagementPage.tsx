@@ -8,11 +8,40 @@ import { CapacitySettings } from '@/components/booking/CapacitySettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, List, Lock, Settings } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const BookingManagementPage = () => {
-  // For demo purposes, using a placeholder business ID
-  // In a real app, this would come from the user's business context
-  const businessId = "demo-business-id";
+  const { user } = useAuth();
+
+  const { data: business } = useQuery({
+    queryKey: ['user-business', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  if (!business) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">No Business Found</h1>
+          <p className="text-gray-600">Please set up your business first to manage bookings.</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -48,7 +77,7 @@ const BookingManagementPage = () => {
                 <CardTitle>Book New Appointment</CardTitle>
               </CardHeader>
               <CardContent>
-                <BookingCalendar businessId={businessId} />
+                <BookingCalendar businessId={business.id} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -59,17 +88,17 @@ const BookingManagementPage = () => {
                 <CardTitle>All Bookings</CardTitle>
               </CardHeader>
               <CardContent>
-                <BookingList />
+                <BookingList businessId={business.id} />
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="blocked">
-            <BlockedTimeSlots businessId={businessId} />
+            <BlockedTimeSlots businessId={business.id} />
           </TabsContent>
 
           <TabsContent value="settings">
-            <CapacitySettings businessId={businessId} />
+            <CapacitySettings businessId={business.id} />
           </TabsContent>
         </Tabs>
       </div>

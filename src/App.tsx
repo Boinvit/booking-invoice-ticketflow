@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,15 +9,19 @@ import { AuthForm } from "@/components/auth/AuthForm";
 import { AuthenticatedApp } from "@/pages/AuthenticatedApp";
 import Index from "./pages/Index";
 import BookingPage from "./pages/BookingPage";
+import BookingManagementPage from "./pages/BookingManagementPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import SettingsPage from "./pages/SettingsPage";
 import ServicesPage from "./pages/ServicesPage";
+import ClientsPage from "./pages/ClientsPage";
+import InvoicesPage from "./pages/InvoicesPage";
 import InvoiceGenerator from "./components/InvoiceGenerator";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import SafetyTips from "./pages/SafetyTips";
+import PublicBookingPage from "./pages/PublicBookingPage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +46,7 @@ const AppContent = () => {
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<AuthForm />} />
         <Route path="/signup" element={<AuthForm />} />
+        <Route path="/book/:subdomain" element={<PublicBookingPage />} />
         <Route path="/public/:subdomain" element={<Index />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
@@ -54,7 +58,10 @@ const AppContent = () => {
           <>
             <Route path="/dashboard" element={<AuthenticatedApp />} />
             <Route path="/booking" element={<BookingPage />} />
+            <Route path="/booking-management" element={<BookingManagementPage />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/invoices" element={<InvoicesPage />} />
             <Route path="/subscription" element={<SubscriptionPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/invoice" element={<InvoiceGenerator />} />
@@ -64,7 +71,10 @@ const AppContent = () => {
             {/* Redirect authenticated routes to login */}
             <Route path="/dashboard" element={<AuthForm />} />
             <Route path="/booking" element={<AuthForm />} />
+            <Route path="/booking-management" element={<AuthForm />} />
             <Route path="/services" element={<AuthForm />} />
+            <Route path="/clients" element={<AuthForm />} />
+            <Route path="/invoices" element={<AuthForm />} />
             <Route path="/subscription" element={<AuthForm />} />
             <Route path="/settings" element={<AuthForm />} />
             <Route path="/invoice" element={<AuthForm />} />
