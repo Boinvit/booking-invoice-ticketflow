@@ -26,22 +26,25 @@ import PublicBookingPage from "./pages/PublicBookingPage";
 
 const queryClient = new QueryClient();
 
+// Loading component
+const LoadingScreen = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+      <p className="mt-4 text-gray-600 text-lg">Loading...</p>
+    </div>
+  </div>
+);
+
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
   
-  return user ? <>{children}</> : <Navigate to="/login" replace />;
+  return user ? <>{children}</> : <Navigate to="/auth" replace />;
 };
 
 // Public Route Component (redirects authenticated users)
@@ -49,14 +52,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
   
   return user ? <Navigate to="/dashboard" replace /> : <>{children}</>;
@@ -76,8 +72,9 @@ const AppContent = () => {
         <Route path="/safety" element={<SafetyTips />} />
         
         {/* Auth routes - redirect if already authenticated */}
-        <Route path="/login" element={<PublicRoute><AuthForm /></PublicRoute>} />
-        <Route path="/signup" element={<PublicRoute><AuthForm /></PublicRoute>} />
+        <Route path="/auth" element={<PublicRoute><AuthForm /></PublicRoute>} />
+        <Route path="/login" element={<Navigate to="/auth" replace />} />
+        <Route path="/signup" element={<Navigate to="/auth" replace />} />
         
         {/* Protected routes - require authentication */}
         <Route path="/dashboard" element={<ProtectedRoute><AuthenticatedApp /></ProtectedRoute>} />

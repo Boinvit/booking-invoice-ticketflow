@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Eye, EyeOff, AlertCircle, CheckCircle, Mail } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, CheckCircle, Mail, LogIn, UserPlus } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface PasswordStrength {
@@ -18,7 +18,7 @@ interface PasswordStrength {
 }
 
 export const AuthForm = () => {
-  const { signIn, signUp, user, resetPassword } = useAuth();
+  const { signIn, signUp, user, resetPassword, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -85,6 +85,8 @@ export const AuthForm = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || authLoading) return;
+    
     setLoading(true);
     setAuthError(null);
 
@@ -119,6 +121,8 @@ export const AuthForm = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || authLoading) return;
+    
     setLoading(true);
     setAuthError(null);
 
@@ -163,7 +167,7 @@ export const AuthForm = () => {
         }
         toast.error('Sign up failed');
       } else {
-        toast.success('Account created! Check your email for the confirmation link.');
+        toast.success('Account created! Please check your email for the confirmation link.');
         setAuthError(null);
         // Clear form
         setEmail('');
@@ -182,6 +186,8 @@ export const AuthForm = () => {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+    
     setLoading(true);
     setAuthError(null);
 
@@ -209,18 +215,12 @@ export const AuthForm = () => {
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
   const clearError = () => {
     setAuthError(null);
     setResetEmailSent(false);
   };
+
+  const isFormDisabled = loading || authLoading;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -248,8 +248,14 @@ export const AuthForm = () => {
           
           <Tabs value={activeTab} onValueChange={(value) => { setActiveTab(value); clearError(); }} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signin" className="flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger value="signup" className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Sign Up
+              </TabsTrigger>
               <TabsTrigger value="reset">Reset</TabsTrigger>
             </TabsList>
             
@@ -266,6 +272,7 @@ export const AuthForm = () => {
                       setEmail(e.target.value);
                       if (authError) setAuthError(null);
                     }}
+                    disabled={isFormDisabled}
                     required
                   />
                 </div>
@@ -281,19 +288,21 @@ export const AuthForm = () => {
                         setPassword(e.target.value);
                         if (authError) setAuthError(null);
                       }}
+                      disabled={isFormDisabled}
                       required
                     />
                     <button
                       type="button"
-                      onClick={togglePasswordVisibility}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isFormDisabled}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Signing in...' : 'Sign In'}
+                <Button type="submit" className="w-full" disabled={isFormDisabled}>
+                  {isFormDisabled ? 'Signing in...' : 'Sign In'}
                 </Button>
                 <p className="text-sm text-gray-600 text-center">
                   Don't have an account? Switch to the Sign Up tab above.
@@ -315,6 +324,7 @@ export const AuthForm = () => {
                         setFirstName(e.target.value);
                         if (authError) setAuthError(null);
                       }}
+                      disabled={isFormDisabled}
                       required
                     />
                   </div>
@@ -329,6 +339,7 @@ export const AuthForm = () => {
                         setLastName(e.target.value);
                         if (authError) setAuthError(null);
                       }}
+                      disabled={isFormDisabled}
                       required
                     />
                   </div>
@@ -344,6 +355,7 @@ export const AuthForm = () => {
                       setEmail(e.target.value);
                       if (authError) setAuthError(null);
                     }}
+                    disabled={isFormDisabled}
                     required
                   />
                 </div>
@@ -359,13 +371,15 @@ export const AuthForm = () => {
                         setPassword(e.target.value);
                         if (authError) setAuthError(null);
                       }}
+                      disabled={isFormDisabled}
                       required
                       minLength={6}
                     />
                     <button
                       type="button"
-                      onClick={togglePasswordVisibility}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isFormDisabled}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -415,12 +429,14 @@ export const AuthForm = () => {
                         setConfirmPassword(e.target.value);
                         if (authError) setAuthError(null);
                       }}
+                      disabled={isFormDisabled}
                       required
                     />
                     <button
                       type="button"
-                      onClick={toggleConfirmPasswordVisibility}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      disabled={isFormDisabled}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -435,8 +451,12 @@ export const AuthForm = () => {
                     </div>
                   )}
                 </div>
-                <Button type="submit" className="w-full" disabled={loading || password !== confirmPassword || passwordStrength.score < 3}>
-                  {loading ? 'Creating account...' : 'Create Account'}
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isFormDisabled || password !== confirmPassword || passwordStrength.score < 3}
+                >
+                  {isFormDisabled ? 'Creating account...' : 'Create Account'}
                 </Button>
                 <p className="text-sm text-gray-600 text-center">
                   Already have an account? Switch to the Sign In tab above.
@@ -457,11 +477,12 @@ export const AuthForm = () => {
                       setEmail(e.target.value);
                       if (authError) setAuthError(null);
                     }}
+                    disabled={isFormDisabled}
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Sending reset email...' : 'Send Reset Email'}
+                <Button type="submit" className="w-full" disabled={isFormDisabled}>
+                  {isFormDisabled ? 'Sending reset email...' : 'Send Reset Email'}
                 </Button>
                 <p className="text-sm text-gray-600 text-center">
                   Remember your password? Switch to the Sign In tab above.
