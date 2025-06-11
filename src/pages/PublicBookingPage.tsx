@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { BookingCalendar } from '@/components/booking/BookingCalendar';
+import { PublicBookingCalendar } from '@/components/booking/PublicBookingCalendar';
 import { ReviewDisplay } from '@/components/reviews/ReviewDisplay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -95,6 +95,7 @@ const PublicBookingPage = () => {
 
   const handleBookingComplete = () => {
     toast.success('Booking created successfully! You will receive a confirmation shortly.');
+    setSelectedService(null);
   };
 
   return (
@@ -206,20 +207,11 @@ const PublicBookingPage = () => {
           {/* Booking Calendar */}
           <div className="lg:col-span-3">
             {selectedService ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Book {selectedService.name}</CardTitle>
-                  <p className="text-sm text-gray-600">
-                    Duration: {selectedService.duration_minutes} minutes • Price: ${selectedService.price}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <BookingCalendar 
-                    businessId={business.id} 
-                    onBookingComplete={handleBookingComplete}
-                  />
-                </CardContent>
-              </Card>
+              <PublicBookingCalendar 
+                businessId={business.id} 
+                selectedService={selectedService}
+                onBookingComplete={handleBookingComplete}
+              />
             ) : (
               <Card>
                 <CardContent className="text-center py-12">
