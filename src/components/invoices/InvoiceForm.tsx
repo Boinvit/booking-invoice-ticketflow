@@ -22,16 +22,6 @@ interface InvoiceFormProps {
   onCancel?: () => void;
 }
 
-<<<<<<< HEAD
-const formatPrice = (price: number, currency: string = 'USD') => {
-  if (currency === 'KES') {
-    return `KES ${price}`;
-  }
-  return `$${price}`;
-};
-
-=======
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -64,11 +54,7 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
       
       const { data, error } = await supabase
         .from('businesses')
-<<<<<<< HEAD
-        .select('*')
-=======
         .select('id')
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         .eq('user_id', user.id)
         .single();
       
@@ -110,10 +96,6 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
         throw new Error('Missing required information');
       }
 
-<<<<<<< HEAD
-      const currency = business?.currency || 'KES';
-=======
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       const invoiceData = {
         business_id: business.id,
         client_id: selectedClient,
@@ -124,10 +106,6 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
         due_date: dueDate ? format(dueDate, 'yyyy-MM-dd') : null,
         notes: data.notes,
         status: 'draft' as const,
-<<<<<<< HEAD
-        currency: currency,
-=======
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       };
 
       if (invoice) {
@@ -160,11 +138,6 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
     createInvoiceMutation.mutate(data);
   };
 
-<<<<<<< HEAD
-  const currency = business?.currency || 'KES';
-
-=======
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-6">
       <div>
@@ -184,11 +157,7 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
       </div>
 
       <div>
-<<<<<<< HEAD
-        <Label htmlFor="subtotal">Subtotal ({currency})</Label>
-=======
         <Label htmlFor="subtotal">Subtotal</Label>
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         <Input
           id="subtotal"
           type="number"
@@ -201,11 +170,7 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
       </div>
 
       <div>
-<<<<<<< HEAD
-        <Label htmlFor="tax_amount">Tax Amount ({currency})</Label>
-=======
         <Label htmlFor="tax_amount">Tax Amount</Label>
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         <Input
           id="tax_amount"
           type="number"
@@ -224,12 +189,6 @@ export const InvoiceForm = ({ invoice, onSuccess, onCancel }: InvoiceFormProps) 
           readOnly
           className="bg-gray-100"
         />
-<<<<<<< HEAD
-        <p className="text-sm text-gray-500 mt-1">
-          {formatPrice(watch('total_amount') || 0, currency)}
-        </p>
-=======
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       </div>
 
       <div>
