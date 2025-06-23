@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,7 +22,10 @@ interface Service {
   description: string;
   price: number;
   duration_minutes: number;
+<<<<<<< HEAD
   currency?: string;
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 }
 
 interface Staff {
@@ -35,6 +42,7 @@ interface PublicBookingCalendarProps {
   onBookingComplete?: () => void;
 }
 
+<<<<<<< HEAD
 const formatPrice = (price: number, currency: string = 'USD') => {
   if (currency === 'KES') {
     return `KES ${price}`;
@@ -42,6 +50,8 @@ const formatPrice = (price: number, currency: string = 'USD') => {
   return `$${price}`;
 };
 
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 export const PublicBookingCalendar = ({ businessId, selectedService, onBookingComplete }: PublicBookingCalendarProps) => {
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -54,6 +64,7 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
     notes: ''
   });
 
+<<<<<<< HEAD
   // Fetch business info for currency
   const { data: business } = useQuery({
     queryKey: ['business', businessId],
@@ -69,6 +80,8 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
     },
   });
 
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
   // Fetch staff
   const { data: staff } = useQuery({
     queryKey: ['staff', businessId],
@@ -181,6 +194,7 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
 
   const timeSlots = generateTimeSlots();
 
+<<<<<<< HEAD
   // Improved booking mutation with better error handling
   const createBookingMutation = useMutation({
     mutationFn: async () => {
@@ -195,10 +209,21 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
       let clientId = null;
       
       // Check for existing client
+=======
+  // Create booking mutation
+  const createBookingMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedDate || !selectedTimeSlot || !customerInfo.name || !customerInfo.email) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      // First, get or create client
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       const { data: existingClient } = await supabase
         .from('clients')
         .select('id')
         .eq('business_id', businessId)
+<<<<<<< HEAD
         .eq('email', email)
         .maybeSingle();
 
@@ -232,6 +257,36 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
       const { data: booking, error: bookingError } = await supabase
         .from('bookings')
         .insert({
+=======
+        .eq('email', customerInfo.email)
+        .single();
+
+      let clientId = existingClient?.id;
+
+      if (!clientId) {
+        const { data: newClient, error: clientError } = await supabase
+          .from('clients')
+          .insert([{
+            business_id: businessId,
+            name: customerInfo.name,
+            email: customerInfo.email,
+            phone: customerInfo.phone,
+          }])
+          .select('id')
+          .single();
+
+        if (clientError) throw clientError;
+        clientId = newClient.id;
+      }
+
+      // Generate ticket number
+      const ticketNumber = `TKT-${format(new Date(), 'yyyyMMdd')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+
+      // Create booking
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert([{
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           business_id: businessId,
           client_id: clientId,
           service_id: selectedService.id,
@@ -242,6 +297,7 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
           total_amount: selectedService.price,
           status: 'confirmed',
           ticket_number: ticketNumber,
+<<<<<<< HEAD
           notes: customerInfo.notes?.trim() || null,
         })
         .select()
@@ -260,14 +316,33 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       
       // Reset form
+=======
+          notes: customerInfo.notes,
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Booking created successfully!');
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       setSelectedStaff(null);
       setSelectedTimeSlot(null);
       setCustomerInfo({ name: '', email: '', phone: '', notes: '' });
       onBookingComplete?.();
     },
+<<<<<<< HEAD
     onError: (error: any) => {
       console.error('Booking failed:', error);
       toast.error(error.message || 'Failed to create booking. Please try again.');
+=======
+    onError: (error) => {
+      console.error('Booking error:', error);
+      toast.error('Failed to create booking. Please try again.');
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
     },
   });
 
@@ -275,15 +350,23 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
     createBookingMutation.mutate();
   };
 
+<<<<<<< HEAD
   const isFormValid = customerInfo.name.trim() && customerInfo.email.trim() && selectedDate && selectedTimeSlot;
   const currency = business?.currency || selectedService.currency || 'USD';
+=======
+  const isFormValid = customerInfo.name && customerInfo.email && selectedDate && selectedTimeSlot;
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Book {selectedService.name}</CardTitle>
         <p className="text-sm text-gray-600">
+<<<<<<< HEAD
           Duration: {selectedService.duration_minutes} minutes • Price: {formatPrice(selectedService.price, currency)}
+=======
+          Duration: {selectedService.duration_minutes} minutes • Price: ${selectedService.price}
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         </p>
       </CardHeader>
       <CardContent>
@@ -438,7 +521,11 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
                   )}
                   <div className="flex justify-between font-bold border-t pt-2">
                     <span>Total:</span>
+<<<<<<< HEAD
                     <span>{formatPrice(selectedService.price, currency)}</span>
+=======
+                    <span>${selectedService.price}</span>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                   </div>
                 </div>
               </div>
@@ -453,7 +540,11 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
             </Button>
 
             <p className="text-xs text-gray-500 text-center">
+<<<<<<< HEAD
               You'll receive a confirmation via email and be added as a client
+=======
+              You'll receive a confirmation via email
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             </p>
           </div>
         </div>

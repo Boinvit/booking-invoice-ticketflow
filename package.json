@@ -14,12 +14,15 @@
     "@capacitor/android": "^7.3.0",
     "@capacitor/cli": "^7.3.0",
     "@capacitor/core": "^7.3.0",
+<<<<<<< HEAD
     "@capacitor/status-bar": "^7.0.1",
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",

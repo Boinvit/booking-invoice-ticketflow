@@ -23,8 +23,11 @@ interface BusinessFormData {
   city: string;
   country: string;
   website: string;
+<<<<<<< HEAD
   mpesa_number: string;
   payment_instructions: string;
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 }
 
 export const BusinessSetupWizard = () => {
@@ -36,6 +39,7 @@ export const BusinessSetupWizard = () => {
     subdomain: '',
     description: '',
     phone: '',
+<<<<<<< HEAD
     email: user?.email || '',
     address: '',
     city: '',
@@ -46,24 +50,42 @@ export const BusinessSetupWizard = () => {
   });
 
   const totalSteps = 4;
+=======
+    email: '',
+    address: '',
+    city: '',
+    country: '',
+    website: '',
+  });
+
+  const totalSteps = 3;
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
   const progress = (currentStep / totalSteps) * 100;
 
   const createBusinessMutation = useMutation({
     mutationFn: async (businessData: BusinessFormData) => {
       if (!user) throw new Error('No user found');
       
+<<<<<<< HEAD
       const { data: business, error } = await supabase
+=======
+      const { data, error } = await supabase
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         .from('businesses')
         .insert({
           ...businessData,
           user_id: user.id,
+<<<<<<< HEAD
           currency: 'KES',
           preferred_payment_methods: businessData.mpesa_number ? ['M-Pesa', 'Card Payment'] : ['Card Payment'],
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         })
         .select()
         .single();
       
       if (error) throw error;
+<<<<<<< HEAD
 
       // Create default business settings
       const { error: settingsError } = await supabase
@@ -83,13 +105,19 @@ export const BusinessSetupWizard = () => {
       if (settingsError) throw settingsError;
 
       return business;
+=======
+      return data;
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
     },
     onSuccess: () => {
       toast.success('Business created successfully! Welcome to Boinvit!');
       queryClient.invalidateQueries({ queryKey: ['business'] });
+<<<<<<< HEAD
       queryClient.invalidateQueries({ queryKey: ['user-business'] });
       // Redirect to dashboard
       window.location.href = '/app/dashboard';
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
     },
     onError: (error) => {
       toast.error('Failed to create business: ' + error.message);
@@ -99,6 +127,10 @@ export const BusinessSetupWizard = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
+<<<<<<< HEAD
+=======
+    // Auto-generate subdomain from business name
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
     if (name === 'name') {
       const subdomain = value.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').slice(0, 30);
       setFormData(prev => ({ ...prev, [name]: value, subdomain }));
@@ -131,8 +163,11 @@ export const BusinessSetupWizard = () => {
         return formData.email || formData.phone;
       case 3:
         return true; // Optional step
+<<<<<<< HEAD
       case 4:
         return true; // Optional step
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       default:
         return false;
     }
@@ -145,8 +180,13 @@ export const BusinessSetupWizard = () => {
           <div className="space-y-4">
             <div className="text-center mb-6">
               <Building2 className="mx-auto h-12 w-12 text-blue-600 mb-4" />
+<<<<<<< HEAD
               <h2 className="text-xl md:text-2xl font-bold">Business Basics</h2>
               <p className="text-gray-600 text-sm md:text-base">Let's start with the essentials</p>
+=======
+              <h2 className="text-2xl font-bold">Business Basics</h2>
+              <p className="text-gray-600">Let's start with the essentials</p>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             </div>
             
             <div className="space-y-4">
@@ -171,9 +211,15 @@ export const BusinessSetupWizard = () => {
                     value={formData.subdomain}
                     onChange={handleInputChange}
                     placeholder="your-business"
+<<<<<<< HEAD
                     className="rounded-r-none text-sm"
                   />
                   <div className="bg-gray-100 px-2 md:px-3 py-2 border border-l-0 rounded-r-md text-xs md:text-sm text-gray-600">
+=======
+                    className="rounded-r-none"
+                  />
+                  <div className="bg-gray-100 px-3 py-2 border border-l-0 rounded-r-md text-sm text-gray-600">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                     .boinvit.com
                   </div>
                 </div>
@@ -203,11 +249,19 @@ export const BusinessSetupWizard = () => {
           <div className="space-y-4">
             <div className="text-center mb-6">
               <Globe className="mx-auto h-12 w-12 text-blue-600 mb-4" />
+<<<<<<< HEAD
               <h2 className="text-xl md:text-2xl font-bold">Contact Information</h2>
               <p className="text-gray-600 text-sm md:text-base">How can customers reach you?</p>
             </div>
             
             <div className="grid grid-cols-1 gap-4">
+=======
+              <h2 className="text-2xl font-bold">Contact Information</h2>
+              <p className="text-gray-600">How can customers reach you?</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
               <div>
                 <Label htmlFor="email">Business Email *</Label>
                 <Input
@@ -228,6 +282,7 @@ export const BusinessSetupWizard = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
+<<<<<<< HEAD
                   placeholder="+254 712 345 678"
                   className="mt-1"
                 />
@@ -242,10 +297,29 @@ export const BusinessSetupWizard = () => {
                   value={formData.website}
                   onChange={handleInputChange}
                   placeholder="https://yourbusiness.com"
+=======
+                  placeholder="+1 (555) 123-4567"
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                   className="mt-1"
                 />
               </div>
             </div>
+<<<<<<< HEAD
+=======
+            
+            <div>
+              <Label htmlFor="website">Website (Optional)</Label>
+              <Input
+                id="website"
+                name="website"
+                type="url"
+                value={formData.website}
+                onChange={handleInputChange}
+                placeholder="https://yourbusiness.com"
+                className="mt-1"
+              />
+            </div>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           </div>
         );
 
@@ -254,8 +328,13 @@ export const BusinessSetupWizard = () => {
           <div className="space-y-4">
             <div className="text-center mb-6">
               <MapPin className="mx-auto h-12 w-12 text-blue-600 mb-4" />
+<<<<<<< HEAD
               <h2 className="text-xl md:text-2xl font-bold">Location Details</h2>
               <p className="text-gray-600 text-sm md:text-base">Help customers find you</p>
+=======
+              <h2 className="text-2xl font-bold">Location Details</h2>
+              <p className="text-gray-600">Help customers find you (optional)</p>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -266,7 +345,11 @@ export const BusinessSetupWizard = () => {
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
+<<<<<<< HEAD
                   placeholder="Nairobi"
+=======
+                  placeholder="New York"
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                   className="mt-1"
                 />
               </div>
@@ -278,7 +361,11 @@ export const BusinessSetupWizard = () => {
                   name="country"
                   value={formData.country}
                   onChange={handleInputChange}
+<<<<<<< HEAD
                   placeholder="Kenya"
+=======
+                  placeholder="United States"
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                   className="mt-1"
                 />
               </div>
@@ -291,13 +378,18 @@ export const BusinessSetupWizard = () => {
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
+<<<<<<< HEAD
                 placeholder="123 Business Street, CBD"
+=======
+                placeholder="123 Business Street"
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                 className="mt-1"
               />
             </div>
           </div>
         );
 
+<<<<<<< HEAD
       case 4:
         return (
           <div className="space-y-4">
@@ -342,12 +434,15 @@ export const BusinessSetupWizard = () => {
           </div>
         );
 
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       default:
         return null;
     }
   };
 
   return (
+<<<<<<< HEAD
     <div className="max-w-2xl mx-auto p-4 md:p-6">
       <div className="mb-6 md:mb-8">
         <div className="flex justify-between items-center mb-4">
@@ -355,11 +450,19 @@ export const BusinessSetupWizard = () => {
           <Badge variant="outline" className="text-xs md:text-sm">
             Step {currentStep} of {totalSteps}
           </Badge>
+=======
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold">Welcome to Boinvit!</h1>
+          <Badge variant="outline">Step {currentStep} of {totalSteps}</Badge>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         </div>
         <Progress value={progress} className="h-2" />
       </div>
 
       <Card>
+<<<<<<< HEAD
         <CardHeader className="text-center pb-4">
           <CardTitle className="text-lg md:text-xl">Set Up Your Business</CardTitle>
           <CardDescription className="text-sm md:text-base">
@@ -370,11 +473,27 @@ export const BusinessSetupWizard = () => {
           {renderStep()}
           
           <div className="flex justify-between mt-6 md:mt-8">
+=======
+        <CardHeader className="text-center">
+          <CardTitle>Set Up Your Business</CardTitle>
+          <CardDescription>
+            Get your business ready to accept bookings in just a few steps
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {renderStep()}
+          
+          <div className="flex justify-between mt-8">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             <Button
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 1}
+<<<<<<< HEAD
               className="flex items-center gap-2 text-sm md:text-base px-3 md:px-4"
+=======
+              className="flex items-center gap-2"
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             >
               <ArrowLeft className="h-4 w-4" />
               Previous
@@ -384,7 +503,11 @@ export const BusinessSetupWizard = () => {
               <Button
                 onClick={nextStep}
                 disabled={!isStepValid()}
+<<<<<<< HEAD
                 className="flex items-center gap-2 text-sm md:text-base px-3 md:px-4"
+=======
+                className="flex items-center gap-2"
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
               >
                 Next
                 <ArrowRight className="h-4 w-4" />
@@ -393,7 +516,11 @@ export const BusinessSetupWizard = () => {
               <Button
                 onClick={handleSubmit}
                 disabled={!isStepValid() || createBusinessMutation.isPending}
+<<<<<<< HEAD
                 className="flex items-center gap-2 text-sm md:text-base px-3 md:px-4"
+=======
+                className="flex items-center gap-2"
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
               >
                 {createBusinessMutation.isPending ? (
                   'Creating Business...'

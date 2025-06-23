@@ -18,9 +18,13 @@ import {
   Check,
   Zap,
   Shield,
+<<<<<<< HEAD
   Globe,
   Download,
   Smartphone
+=======
+  Globe
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
@@ -51,7 +55,11 @@ const Index = () => {
       <header className="container mx-auto px-6 py-8">
         <nav className="flex justify-between items-center mb-16">
           <div className="flex items-center space-x-2">
+<<<<<<< HEAD
             <Ticket className="h-8 w-8 text-royal-red" />
+=======
+            <Ticket className="h-8 w-8 text-blue-600" />
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             <span className="text-2xl font-bold text-gray-900">Boinvit</span>
           </div>
           <div className="space-x-4">
@@ -59,31 +67,51 @@ const Index = () => {
               <Button variant="outline">Sign In</Button>
             </Link>
             <Link to="/signup">
+<<<<<<< HEAD
               <Button className="bg-royal-red hover:bg-royal-red-accent text-royal-red-foreground">Get Started Free</Button>
+=======
+              <Button>Get Started Free</Button>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             </Link>
           </div>
         </nav>
 
         <div className="text-center max-w-5xl mx-auto">
+<<<<<<< HEAD
           <Badge className="mb-6 bg-gradient-to-r from-royal-red-muted to-purple-100 text-royal-red border-royal-red hover:bg-royal-red-muted">
+=======
+          <Badge className="mb-6 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 hover:bg-blue-100">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             <Star className="w-4 h-4 mr-1" />
             Trusted by 10,000+ Service Businesses Globally
           </Badge>
           <h1 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">
             Complete Business Solution for
+<<<<<<< HEAD
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-royal-red to-purple-600"> Service Industries</span>
+=======
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Service Industries</span>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
             From transport and logistics to beauty and healthcare - Boinvit powers booking, invoicing, and ticketing for diverse service businesses worldwide. Generate QR codes, accept payments, and delight customers with our all-in-one platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/signup">
+<<<<<<< HEAD
               <Button size="lg" className="bg-gradient-to-r from-royal-red to-purple-600 hover:from-royal-red-accent hover:to-purple-700 text-white px-8 py-4">
+=======
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                 <Zap className="mr-2 h-5 w-5" />
                 Start Free Trial - No Credit Card
               </Button>
             </Link>
+<<<<<<< HEAD
             <Button size="lg" variant="outline" className="px-8 py-4 border-royal-red text-royal-red hover:bg-royal-red-muted">
+=======
+            <Button size="lg" variant="outline" className="px-8 py-4">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
               <Youtube className="mr-2 h-4 w-4" />
               Watch 2-Min Demo
             </Button>
@@ -91,6 +119,7 @@ const Index = () => {
         </div>
       </header>
 
+<<<<<<< HEAD
       {/* Mobile App Download Section */}
       <section className="py-16 bg-gradient-to-r from-royal-red-muted to-blue-50">
         <div className="container mx-auto px-6">
@@ -126,6 +155,8 @@ const Index = () => {
         </div>
       </section>
 
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       {/* Sliding Business Types Showcase */}
       <section className="py-16 bg-white overflow-hidden">
         <div className="container mx-auto px-6">
@@ -141,16 +172,27 @@ const Index = () => {
           <div className="relative">
             <div className="flex animate-[slide-in-right_20s_linear_infinite] space-x-8">
               {[...businessTypes, ...businessTypes].map((business, index) => (
+<<<<<<< HEAD
                 <Card key={index} className="min-w-[300px] border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50 hover:border-royal-red">
                   <CardHeader className="text-center pb-4">
                     <div className="mx-auto w-16 h-16 bg-gradient-to-br from-royal-red-muted to-purple-100 rounded-full flex items-center justify-center mb-4">
                       <business.icon className="h-8 w-8 text-royal-red" />
+=======
+                <Card key={index} className="min-w-[300px] border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50">
+                  <CardHeader className="text-center pb-4">
+                    <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
+                      <business.icon className="h-8 w-8 text-blue-600" />
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                     </div>
                     <CardTitle className="text-xl text-gray-900">{business.name}</CardTitle>
                     <CardDescription className="text-gray-600">{business.desc}</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
+<<<<<<< HEAD
                     <Badge variant="outline" className="text-royal-red border-royal-red">
+=======
+                    <Badge variant="outline" className="text-blue-600 border-blue-200">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                       <Check className="w-3 h-3 mr-1" />
                       Active Businesses: 500+
                     </Badge>
@@ -163,15 +205,26 @@ const Index = () => {
       </section>
 
       {/* Unique QR Code Feature Highlight */}
+<<<<<<< HEAD
       <section className="py-16 bg-gradient-to-r from-purple-50 to-royal-red-muted">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-royal-red text-royal-red-foreground">
+=======
+      <section className="py-16 bg-gradient-to-r from-purple-50 to-blue-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-purple-100 text-purple-800">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
               <QrCode className="w-4 h-4 mr-2" />
               Exclusive Feature
             </Badge>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
+<<<<<<< HEAD
               Revolutionary QR Code Booking System
+=======
+              Revolutionary QR Code Business Profiles
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               The only platform that generates unique QR codes for your business. Customers simply scan to access your booking page, services, and make instant payments.
@@ -182,8 +235,13 @@ const Index = () => {
             <div>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
+<<<<<<< HEAD
                   <div className="w-8 h-8 bg-royal-red-muted rounded-full flex items-center justify-center flex-shrink-0">
                     <QrCode className="w-4 h-4 text-royal-red" />
+=======
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <QrCode className="w-4 h-4 text-purple-600" />
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">Instant Access</h3>
@@ -211,10 +269,17 @@ const Index = () => {
               </div>
             </div>
             <div className="text-center">
+<<<<<<< HEAD
               <div className="bg-white p-8 rounded-xl shadow-2xl inline-block border-2 border-royal-red-muted">
                 <QrCode className="w-32 h-32 text-gray-800 mx-auto mb-4" />
                 <p className="text-sm text-gray-600 mb-2">Sample QR Code</p>
                 <Badge className="bg-royal-red text-royal-red-foreground">
+=======
+              <div className="bg-white p-8 rounded-xl shadow-2xl inline-block">
+                <QrCode className="w-32 h-32 text-gray-800 mx-auto mb-4" />
+                <p className="text-sm text-gray-600 mb-2">Sample QR Code</p>
+                <Badge className="bg-green-100 text-green-800">
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                   Scan with your phone camera
                 </Badge>
               </div>
@@ -248,11 +313,19 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-sm text-gray-600">
+<<<<<<< HEAD
                 <li>• Service selection & staff assignment</li>
                 <li>• Real-time availability tracking</li>
                 <li>• WhatsApp/Email confirmations</li>
                 <li>• Calendar integration & sync</li>
                 <li>• Location services using Google Maps</li>
+=======
+                <li>• Custom subdomain: yourname.boinvit.com</li>
+                <li>• Service selection & staff assignment</li>
+                <li>• Real-time availability tracking</li>
+                <li>• WhatsApp/SMS confirmations</li>
+                <li>• Calendar integration & sync</li>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                 <li>• QR code instant booking</li>
               </ul>
             </CardContent>

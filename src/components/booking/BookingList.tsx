@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
+=======
+
+import React from 'react';
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -17,7 +22,10 @@ interface BookingListProps {
 export const BookingList = ({ businessId, clientView = false }: BookingListProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+<<<<<<< HEAD
   const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 
   const { data: business } = useQuery({
     queryKey: ['user-business', user?.id],
@@ -96,6 +104,7 @@ export const BookingList = ({ businessId, clientView = false }: BookingListProps
     },
   });
 
+<<<<<<< HEAD
   const updateStatusMutation = useMutation({
     mutationFn: async ({ bookingId, status }: { bookingId: string; status: string }) => {
       setUpdatingStatusId(bookingId);
@@ -118,6 +127,8 @@ export const BookingList = ({ businessId, clientView = false }: BookingListProps
     }
   });
 
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
@@ -209,6 +220,7 @@ export const BookingList = ({ businessId, clientView = false }: BookingListProps
                     Notes: {booking.notes}
                   </div>
                 )}
+<<<<<<< HEAD
 
                 {/* Booking status management dropdown - admin/staff only */}
                 {!clientView && (
@@ -233,6 +245,8 @@ export const BookingList = ({ businessId, clientView = false }: BookingListProps
                     </select>
                   </div>
                 )}
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
               </div>
 
               {booking.status === 'pending' && (

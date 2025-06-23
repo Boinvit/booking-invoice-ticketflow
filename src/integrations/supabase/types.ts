@@ -9,7 +9,49 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+<<<<<<< HEAD
       audit_log: {
+=======
+      blocked_time_slots: {
+        Row: {
+          blocked_date: string
+          blocked_time: string
+          business_id: string
+          created_at: string | null
+          id: string
+          reason: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          blocked_date: string
+          blocked_time: string
+          business_id: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          blocked_date?: string
+          blocked_time?: string
+          business_id?: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_time_slots_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         Row: {
           action: string
           created_at: string
@@ -304,7 +346,10 @@ export type Database = {
           enable_card_payments: boolean | null
           enable_mpesa: boolean | null
           id: string
+<<<<<<< HEAD
           map_description: string | null
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           max_bookings_per_slot: number | null
           notification_preferences: Json | null
           payment_instructions: string | null
@@ -331,7 +376,10 @@ export type Database = {
           enable_card_payments?: boolean | null
           enable_mpesa?: boolean | null
           id?: string
+<<<<<<< HEAD
           map_description?: string | null
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           max_bookings_per_slot?: number | null
           notification_preferences?: Json | null
           payment_instructions?: string | null
@@ -358,7 +406,10 @@ export type Database = {
           enable_card_payments?: boolean | null
           enable_mpesa?: boolean | null
           id?: string
+<<<<<<< HEAD
           map_description?: string | null
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           max_bookings_per_slot?: number | null
           notification_preferences?: Json | null
           payment_instructions?: string | null
@@ -384,8 +435,11 @@ export type Database = {
         Row: {
           address: string | null
           average_rating: number | null
+<<<<<<< HEAD
           bank_account: string | null
           bank_name: string | null
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           business_hours: Json | null
           city: string | null
           country: string | null
@@ -404,6 +458,7 @@ export type Database = {
           name: string
           payment_instructions: string | null
           phone: string | null
+<<<<<<< HEAD
           preferred_payment_methods: string[] | null
           search_vector: unknown | null
           service_radius_km: number | null
@@ -411,13 +466,30 @@ export type Database = {
           total_reviews: number | null
           updated_at: string | null
           user_id: string | null
+=======
+          status: Database["public"]["Enums"]["business_status"] | null
+          subdomain: string
+          subscription_expires_at: string | null
+          subscription_next_billing_date: string | null
+          subscription_plan:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          subscription_started_at: string | null
+          subscription_status: string | null
+          total_reviews: number | null
+          updated_at: string
+          user_id: string
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           website: string | null
         }
         Insert: {
           address?: string | null
           average_rating?: number | null
+<<<<<<< HEAD
           bank_account?: string | null
           bank_name?: string | null
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           business_hours?: Json | null
           city?: string | null
           country?: string | null
@@ -436,6 +508,7 @@ export type Database = {
           name: string
           payment_instructions?: string | null
           phone?: string | null
+<<<<<<< HEAD
           preferred_payment_methods?: string[] | null
           search_vector?: unknown | null
           service_radius_km?: number | null
@@ -443,13 +516,30 @@ export type Database = {
           total_reviews?: number | null
           updated_at?: string | null
           user_id?: string | null
+=======
+          status?: Database["public"]["Enums"]["business_status"] | null
+          subdomain: string
+          subscription_expires_at?: string | null
+          subscription_next_billing_date?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
+          total_reviews?: number | null
+          updated_at?: string
+          user_id: string
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           website?: string | null
         }
         Update: {
           address?: string | null
           average_rating?: number | null
+<<<<<<< HEAD
           bank_account?: string | null
           bank_name?: string | null
+=======
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           business_hours?: Json | null
           city?: string | null
           country?: string | null
@@ -468,6 +558,7 @@ export type Database = {
           name?: string
           payment_instructions?: string | null
           phone?: string | null
+<<<<<<< HEAD
           preferred_payment_methods?: string[] | null
           search_vector?: unknown | null
           service_radius_km?: number | null
@@ -475,6 +566,20 @@ export type Database = {
           total_reviews?: number | null
           updated_at?: string | null
           user_id?: string | null
+=======
+          status?: Database["public"]["Enums"]["business_status"] | null
+          subdomain?: string
+          subscription_expires_at?: string | null
+          subscription_next_billing_date?: string | null
+          subscription_plan?:
+            | Database["public"]["Enums"]["subscription_plan"]
+            | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
+          total_reviews?: number | null
+          updated_at?: string
+          user_id?: string
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           website?: string | null
         }
         Relationships: []
@@ -866,6 +971,57 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          business_id: string
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json | null
+          payment_date: string | null
+          payment_method: string
+          pesapal_merchant_reference: string
+          pesapal_order_tracking_id: string | null
+          pesapal_tracking_id: string | null
+          status: string
+          subscription_plan_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          business_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          payment_date?: string | null
+          payment_method: string
+          pesapal_merchant_reference: string
+          pesapal_order_tracking_id?: string | null
+          pesapal_tracking_id?: string | null
+          status?: string
+          subscription_plan_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          business_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json | null
+          payment_date?: string | null
+          payment_method?: string
+          pesapal_merchant_reference?: string
+          pesapal_order_tracking_id?: string | null
+          pesapal_tracking_id?: string | null
+          status?: string
+          subscription_plan_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           business_id: string
@@ -1180,6 +1336,7 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
         }[]
       }
+<<<<<<< HEAD
       has_role: {
         Args: {
           _user_id: string
@@ -1224,6 +1381,19 @@ export type Database = {
       }
       validate_business_ownership: {
         Args: { business_id: string }
+        Returns: boolean
+=======
+      get_booking_count_for_slot: {
+        Args: { p_business_id: string; p_date: string; p_time: string }
+        Returns: number
+      }
+      get_user_business_ids: {
+        Args: { user_uuid: string }
+        Returns: string[]
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
+      }
+      is_time_slot_available: {
+        Args: { p_business_id: string; p_date: string; p_time: string }
         Returns: boolean
       }
     }

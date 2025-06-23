@@ -6,15 +6,36 @@ import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus
 import { useSubscription } from '@/hooks/useSubscription';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+<<<<<<< HEAD
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSkeleton } from '@/components/ui/loading-skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Clock, TrendingUp, Users, CheckCircle } from 'lucide-react';
+=======
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { PesapalPayment } from '@/components/payment/PesapalPayment';
+import { PaymentSuccess } from '@/components/payment/PaymentSuccess';
+import { LoadingSpinner } from '@/components/subscription/LoadingSpinner';
+import { SubscriptionHeader } from '@/components/subscription/SubscriptionHeader';
+import { MobilePaymentNotice } from '@/components/subscription/MobilePaymentNotice';
+import { PlanGrid } from '@/components/subscription/PlanGrid';
+import { ContactSalesSection } from '@/components/subscription/ContactSalesSection';
+import { SubscriptionPlan, UserBusiness } from '@/types/subscription';
+import { useState } from 'react';
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 
 const SubscriptionPage = () => {
   const { user } = useAuth();
+<<<<<<< HEAD
   const { subscription, isLoading, createSubscription, isCreatingSubscription } = useSubscription();
+=======
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
+  const [showPayment, setShowPayment] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 
   // Get user's business
   const { data: business, isLoading: isBusinessLoading } = useQuery({
@@ -30,8 +51,9 @@ const SubscriptionPage = () => {
         .maybeSingle();
       
       if (error) throw error;
-      return data;
+      return data as SubscriptionPlan[];
     },
+<<<<<<< HEAD
     enabled: !!user,
   });
 
@@ -51,11 +73,68 @@ const SubscriptionPage = () => {
       <DashboardLayout>
         <div className="space-y-6">
           <LoadingSkeleton lines={6} />
+=======
+  });
+
+  const { data: userBusiness } = useQuery({
+    queryKey: ['user-business', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('id, subscription_plan, subscription_status')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (error) throw error;
+      return data as UserBusiness;
+    },
+    enabled: !!user,
+  });
+
+  const handleUpgrade = (plan: SubscriptionPlan) => {
+    if (plan.price_monthly === 0) {
+      toast.info('You are already on the free plan');
+      return;
+    }
+    
+    setSelectedPlan(plan);
+    setShowPayment(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPayment(false);
+    setShowSuccess(true);
+  };
+
+  const handleContinueAfterSuccess = () => {
+    setShowSuccess(false);
+    setSelectedPlan(null);
+    toast.success('Subscription activated successfully!');
+    window.location.reload();
+  };
+
+  if (plansLoading) {
+    return (
+      <DashboardLayout>
+        <LoadingSpinner />
+      </DashboardLayout>
+    );
+  }
+
+  if (showSuccess) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-2xl mx-auto">
+          <PaymentSuccess onContinue={handleContinueAfterSuccess} />
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         </div>
       </DashboardLayout>
     );
   }
 
+<<<<<<< HEAD
   if (!business) {
     return (
       <DashboardLayout>
@@ -78,6 +157,34 @@ const SubscriptionPage = () => {
                 </button>
               </CardContent>
             </Card>
+=======
+  if (showPayment && selectedPlan && userBusiness) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Your Payment</h1>
+            <p className="text-gray-600">
+              Upgrade to {selectedPlan.name} plan - KES {selectedPlan.price_monthly.toLocaleString()}/month
+            </p>
+          </div>
+
+          <PesapalPayment
+            businessId={userBusiness.id}
+            planId={selectedPlan.id}
+            planName={selectedPlan.name}
+            amount={selectedPlan.price_monthly}
+            onSuccess={handlePaymentSuccess}
+          />
+
+          <div className="mt-6 text-center">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowPayment(false)}
+            >
+              Back to Plans
+            </Button>
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           </div>
         </div>
       </DashboardLayout>
@@ -86,6 +193,7 @@ const SubscriptionPage = () => {
 
   return (
     <DashboardLayout>
+<<<<<<< HEAD
       <div className="space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Plan</h1>
@@ -183,6 +291,21 @@ const SubscriptionPage = () => {
             </div>
           </CardContent>
         </Card>
+=======
+      <div className="max-w-7xl mx-auto">
+        <SubscriptionHeader userBusiness={userBusiness} />
+        <MobilePaymentNotice />
+        
+        {subscriptionPlans && (
+          <PlanGrid 
+            plans={subscriptionPlans}
+            userBusiness={userBusiness}
+            onUpgrade={handleUpgrade}
+          />
+        )}
+        
+        <ContactSalesSection />
+>>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
       </div>
     </DashboardLayout>
   );
