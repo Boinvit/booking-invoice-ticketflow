@@ -2,66 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
-<<<<<<< HEAD
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
-import { LogIn, UserPlus } from 'lucide-react';
-import { AuthAlerts } from './AuthAlerts';
-import { SignInForm } from './SignInForm';
-import { SignUpForm } from './SignUpForm';
-import { PasswordResetForm } from './PasswordResetForm';
-
-export const AuthForm = () => {
-  const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [loading, setLoading] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('signin');
-  const [resetEmailSent, setResetEmailSent] = useState(false);
-  const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const [pendingEmail, setPendingEmail] = useState('');
-
-  // Redirect authenticated users
-  useEffect(() => {
-    if (user) {
-      console.log('User authenticated, redirecting to dashboard:', user.email);
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
-    }
-  }, [user, navigate, location]);
-
-  const clearError = () => {
-    setAuthError(null);
-    setResetEmailSent(false);
-    setSignUpSuccess(false);
-  };
-
-  const handleSignUpSuccess = (email: string) => {
-    setSignUpSuccess(true);
-    setPendingEmail(email);
-    toast.success('Account created! Please check your email for the confirmation link.');
-    setAuthError(null);
-  };
-
-  const handleResetSuccess = () => {
-    setResetEmailSent(true);
-    toast.success('Password reset email sent! Check your inbox.');
-    setAuthError(null);
-  };
-
-  const handleError = (error: string | null) => {
-    console.log('Auth form error:', error);
-    setAuthError(error);
-    setLoading(false);
-    if (error) {
-      toast.error(error);
-    }
-  };
-
-  const isFormDisabled = loading || authLoading;
-=======
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -243,7 +183,6 @@ export const AuthForm = () => {
       setLoading(false);
     }
   };
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -287,7 +226,6 @@ export const AuthForm = () => {
     <div className="w-full max-w-md mx-auto">
       <Card className="w-full">
         <CardHeader className="text-center">
-<<<<<<< HEAD
           <div className="flex justify-center mb-4">
             <img 
               src="/lovable-uploads/307c9897-7d4d-4c72-9525-71af1ea5c02f.png" 
@@ -296,17 +234,6 @@ export const AuthForm = () => {
             />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">Welcome to Boinvit</CardTitle>
-          <CardDescription>Your complete booking management solution</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AuthAlerts 
-            authError={authError}
-            signUpSuccess={signUpSuccess}
-            resetEmailSent={resetEmailSent}
-            pendingEmail={pendingEmail}
-          />
-=======
-          <CardTitle className="text-2xl font-bold text-gray-900">Boinvit</CardTitle>
           <CardDescription>Your complete booking management solution</CardDescription>
         </CardHeader>
         <CardContent>
@@ -325,7 +252,6 @@ export const AuthForm = () => {
               </AlertDescription>
             </Alert>
           )}
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
           
           <Tabs value={activeTab} onValueChange={(value) => { setActiveTab(value); clearError(); }} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
@@ -341,33 +267,6 @@ export const AuthForm = () => {
             </TabsList>
             
             <TabsContent value="signin">
-<<<<<<< HEAD
-              <SignInForm 
-                loading={isFormDisabled}
-                authError={authError}
-                pendingEmail={pendingEmail}
-                onError={handleError}
-              />
-            </TabsContent>
-            
-            <TabsContent value="signup">
-              <SignUpForm 
-                loading={isFormDisabled}
-                authError={authError}
-                onError={handleError}
-                onSignUpSuccess={handleSignUpSuccess}
-                onTabChange={setActiveTab}
-              />
-            </TabsContent>
-
-            <TabsContent value="reset">
-              <PasswordResetForm 
-                loading={isFormDisabled}
-                authError={authError}
-                onError={handleError}
-                onResetSuccess={handleResetSuccess}
-              />
-=======
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
@@ -596,7 +495,6 @@ export const AuthForm = () => {
                   Remember your password? Switch to the Sign In tab above.
                 </p>
               </form>
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
             </TabsContent>
           </Tabs>
         </CardContent>
