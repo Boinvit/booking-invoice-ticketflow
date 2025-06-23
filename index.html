@@ -4,24 +4,94 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Boinvit - Business Booking & Invoice Management</title>
-    <meta name="description" content="Comprehensive booking and invoice management platform for businesses" />
+    <title>Boinvit - Complete Business Management Platform | Bookings, Invoicing, Staff Management</title>
+    <meta name="description" content="Complete business management platform for modern entrepreneurs. Manage bookings, invoicing, payments, staff, analytics and more. Start your free trial today!" />
+    <meta name="keywords" content="business management, booking system, invoicing, staff management, payment processing, business analytics, Kenya, SaaS" />
     <meta name="author" content="Boinvit" />
+    <link rel="canonical" href="https://boinvit.com" />
+    <link rel="icon" href="/lovable-uploads/307c9897-7d4d-4c72-9525-71af1ea5c02f.png?v=1.0.4" type="image/png">
 
-    <meta property="og:title" content="Boinvit - Business Booking & Invoice Management" />
-    <meta property="og:description" content="Comprehensive booking and invoice management platform for businesses" />
+    <!-- Cache Control Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json?v=1.0.4">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#dc2626">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Boinvit">
+    <link rel="apple-touch-icon" href="/lovable-uploads/307c9897-7d4d-4c72-9525-71af1ea5c02f.png?v=1.0.4">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Boinvit - Complete Business Management Platform" />
+    <meta property="og:description" content="All-in-one business management: bookings, invoicing, payments, staff management, analytics. Start your free trial today!" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://boinvit.com" />
+    <meta property="og:image" content="https://boinvit.com/lovable-uploads/307c9897-7d4d-4c72-9525-71af1ea5c02f.png?v=1.0.4" />
+    <meta property="og:site_name" content="Boinvit" />
+    <meta property="og:locale" content="en_US" />
 
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@boinvit" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="Boinvit - Complete Business Management Platform" />
+    <meta name="twitter:description" content="All-in-one business management: bookings, invoicing, payments, staff management, analytics. Start your free trial today!" />
+    <meta name="twitter:image" content="https://boinvit.com/lovable-uploads/307c9897-7d4d-4c72-9525-71af1ea5c02f.png?v=1.0.4" />
+
+    <!-- Additional SEO Meta Tags -->
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="rating" content="general" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Boinvit",
+      "description": "Complete business management platform for bookings, invoicing, staff management, and analytics",
+      "url": "https://boinvit.com",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "2900",
+        "priceCurrency": "KES",
+        "priceValidUntil": "2025-12-31"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "150"
+      }
+    }
+    </script>
   </head>
 
   <body>
     <div id="root"></div>
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <script src="https://cdn.gpteng.co/gptengineer.js?v=1.0.4" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js?v=1.0.4')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

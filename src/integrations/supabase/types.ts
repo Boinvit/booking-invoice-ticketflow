@@ -9,54 +9,173 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      bookings: {
+      audit_log: {
         Row: {
-          booking_date: string
-          booking_time: string
-          business_id: string
-          client_id: string
+          action: string
           created_at: string
-          duration_minutes: number
           id: string
-          notes: string | null
-          service_id: string
-          staff_id: string | null
-          status: Database["public"]["Enums"]["booking_status"] | null
-          ticket_number: string
-          total_amount: number
-          updated_at: string
+          ip_address: string | null
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string
+          user_agent: string | null
+          user_id: string | null
         }
         Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      blocked_time_slots: {
+        Row: {
+          blocked_date: string
+          blocked_time: string
+          business_id: string
+          created_at: string | null
+          id: string
+          reason: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          blocked_date: string
+          blocked_time: string
+          business_id: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          blocked_date?: string
+          blocked_time?: string
+          business_id?: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_time_slots_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          auto_payment_required: boolean | null
           booking_date: string
           booking_time: string
           business_id: string
           client_id: string
-          created_at?: string
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          duration_minutes: number
+          id: string
+          invoice_generated: boolean | null
+          notes: string | null
+          original_booking_date: string | null
+          original_booking_time: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          payment_status: string | null
+          reminder_sent_at: string | null
+          reschedule_count: number | null
+          reschedule_deadline: string | null
+          service_id: string
+          staff_id: string | null
+          status: string
+          ticket_code: string | null
+          ticket_number: string | null
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          auto_payment_required?: boolean | null
+          booking_date: string
+          booking_time: string
+          business_id: string
+          client_id: string
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           duration_minutes: number
           id?: string
+          invoice_generated?: boolean | null
           notes?: string | null
+          original_booking_date?: string | null
+          original_booking_time?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          reminder_sent_at?: string | null
+          reschedule_count?: number | null
+          reschedule_deadline?: string | null
           service_id: string
           staff_id?: string | null
-          status?: Database["public"]["Enums"]["booking_status"] | null
-          ticket_number: string
+          status?: string
+          ticket_code?: string | null
+          ticket_number?: string | null
           total_amount: number
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
+          auto_payment_required?: boolean | null
           booking_date?: string
           booking_time?: string
           business_id?: string
           client_id?: string
-          created_at?: string
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           duration_minutes?: number
           id?: string
+          invoice_generated?: boolean | null
           notes?: string | null
+          original_booking_date?: string | null
+          original_booking_time?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
+          reminder_sent_at?: string | null
+          reschedule_count?: number | null
+          reschedule_deadline?: string | null
           service_id?: string
           staff_id?: string | null
-          status?: Database["public"]["Enums"]["booking_status"] | null
-          ticket_number?: string
+          status?: string
+          ticket_code?: string | null
+          ticket_number?: string | null
           total_amount?: number
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -93,28 +212,28 @@ export type Database = {
         Row: {
           business_id: string
           created_at: string
-          default_currency: string | null
-          enabled_payment_gateways: string[] | null
-          gateway_configurations: Json | null
           id: string
+          payment_methods: Json | null
+          paystack_public_key: string | null
+          require_payment: boolean
           updated_at: string
         }
         Insert: {
           business_id: string
           created_at?: string
-          default_currency?: string | null
-          enabled_payment_gateways?: string[] | null
-          gateway_configurations?: Json | null
           id?: string
+          payment_methods?: Json | null
+          paystack_public_key?: string | null
+          require_payment?: boolean
           updated_at?: string
         }
         Update: {
           business_id?: string
           created_at?: string
-          default_currency?: string | null
-          enabled_payment_gateways?: string[] | null
-          gateway_configurations?: Json | null
           id?: string
+          payment_methods?: Json | null
+          paystack_public_key?: string | null
+          require_payment?: boolean
           updated_at?: string
         }
         Relationships: [
@@ -127,51 +246,129 @@ export type Database = {
           },
         ]
       }
+      business_reviews: {
+        Row: {
+          booking_id: string
+          business_id: string
+          comment: string | null
+          created_at: string | null
+          id: string
+          rating: number
+        }
+        Insert: {
+          booking_id: string
+          business_id: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating: number
+        }
+        Update: {
+          booking_id?: string
+          business_id?: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_settings: {
         Row: {
           auto_confirm_bookings: boolean | null
           booking_advance_days: number | null
           booking_buffer_minutes: number | null
+          booking_slot_duration_minutes: number | null
           business_id: string
-          created_at: string
+          contact_preferences: Json | null
+          created_at: string | null
           currency: string | null
+          custom_domain: string | null
           default_tax_rate: number | null
+          enable_bank_transfer: boolean | null
+          enable_card_payments: boolean | null
+          enable_mpesa: boolean | null
           id: string
+          map_description: string | null
+          max_bookings_per_slot: number | null
           notification_preferences: Json | null
+          payment_instructions: string | null
           reminder_hours_before: number | null
+          require_payment: boolean | null
           send_reminders: boolean | null
+          show_on_map: boolean | null
+          subdomain_enabled: boolean | null
           timezone: string | null
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           auto_confirm_bookings?: boolean | null
           booking_advance_days?: number | null
           booking_buffer_minutes?: number | null
+          booking_slot_duration_minutes?: number | null
           business_id: string
-          created_at?: string
+          contact_preferences?: Json | null
+          created_at?: string | null
           currency?: string | null
+          custom_domain?: string | null
           default_tax_rate?: number | null
+          enable_bank_transfer?: boolean | null
+          enable_card_payments?: boolean | null
+          enable_mpesa?: boolean | null
           id?: string
+          map_description?: string | null
+          max_bookings_per_slot?: number | null
           notification_preferences?: Json | null
+          payment_instructions?: string | null
           reminder_hours_before?: number | null
+          require_payment?: boolean | null
           send_reminders?: boolean | null
+          show_on_map?: boolean | null
+          subdomain_enabled?: boolean | null
           timezone?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           auto_confirm_bookings?: boolean | null
           booking_advance_days?: number | null
           booking_buffer_minutes?: number | null
+          booking_slot_duration_minutes?: number | null
           business_id?: string
-          created_at?: string
+          contact_preferences?: Json | null
+          created_at?: string | null
           currency?: string | null
+          custom_domain?: string | null
           default_tax_rate?: number | null
+          enable_bank_transfer?: boolean | null
+          enable_card_payments?: boolean | null
+          enable_mpesa?: boolean | null
           id?: string
+          map_description?: string | null
+          max_bookings_per_slot?: number | null
           notification_preferences?: Json | null
+          payment_instructions?: string | null
           reminder_hours_before?: number | null
+          require_payment?: boolean | null
           send_reminders?: boolean | null
+          show_on_map?: boolean | null
+          subdomain_enabled?: boolean | null
           timezone?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -186,68 +383,98 @@ export type Database = {
       businesses: {
         Row: {
           address: string | null
+          average_rating: number | null
+          bank_account: string | null
+          bank_name: string | null
           business_hours: Json | null
           city: string | null
           country: string | null
-          created_at: string
+          created_at: string | null
+          currency: string | null
           description: string | null
           email: string | null
+          featured_image_url: string | null
           id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          latitude: number | null
           logo_url: string | null
+          longitude: number | null
+          mpesa_number: string | null
           name: string
+          payment_instructions: string | null
           phone: string | null
-          status: Database["public"]["Enums"]["business_status"] | null
-          subdomain: string
-          subscription_expires_at: string | null
-          subscription_plan:
-            | Database["public"]["Enums"]["subscription_plan"]
-            | null
-          updated_at: string
-          user_id: string
+          preferred_payment_methods: string[] | null
+          search_vector: unknown | null
+          service_radius_km: number | null
+          subdomain: string | null
+          total_reviews: number | null
+          updated_at: string | null
+          user_id: string | null
           website: string | null
         }
         Insert: {
           address?: string | null
+          average_rating?: number | null
+          bank_account?: string | null
+          bank_name?: string | null
           business_hours?: Json | null
           city?: string | null
           country?: string | null
-          created_at?: string
+          created_at?: string | null
+          currency?: string | null
           description?: string | null
           email?: string | null
+          featured_image_url?: string | null
           id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
+          mpesa_number?: string | null
           name: string
+          payment_instructions?: string | null
           phone?: string | null
-          status?: Database["public"]["Enums"]["business_status"] | null
-          subdomain: string
-          subscription_expires_at?: string | null
-          subscription_plan?:
-            | Database["public"]["Enums"]["subscription_plan"]
-            | null
-          updated_at?: string
-          user_id: string
+          preferred_payment_methods?: string[] | null
+          search_vector?: unknown | null
+          service_radius_km?: number | null
+          subdomain?: string | null
+          total_reviews?: number | null
+          updated_at?: string | null
+          user_id?: string | null
           website?: string | null
         }
         Update: {
           address?: string | null
+          average_rating?: number | null
+          bank_account?: string | null
+          bank_name?: string | null
           business_hours?: Json | null
           city?: string | null
           country?: string | null
-          created_at?: string
+          created_at?: string | null
+          currency?: string | null
           description?: string | null
           email?: string | null
+          featured_image_url?: string | null
           id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          latitude?: number | null
           logo_url?: string | null
+          longitude?: number | null
+          mpesa_number?: string | null
           name?: string
+          payment_instructions?: string | null
           phone?: string | null
-          status?: Database["public"]["Enums"]["business_status"] | null
-          subdomain?: string
-          subscription_expires_at?: string | null
-          subscription_plan?:
-            | Database["public"]["Enums"]["subscription_plan"]
-            | null
-          updated_at?: string
-          user_id?: string
+          preferred_payment_methods?: string[] | null
+          search_vector?: unknown | null
+          service_radius_km?: number | null
+          subdomain?: string | null
+          total_reviews?: number | null
+          updated_at?: string | null
+          user_id?: string | null
           website?: string | null
         }
         Relationships: []
@@ -256,35 +483,41 @@ export type Database = {
         Row: {
           address: string | null
           business_id: string
-          created_at: string
-          email: string | null
+          created_at: string | null
+          email: string
           id: string
+          last_service_date: string | null
           name: string
           notes: string | null
           phone: string | null
-          updated_at: string
+          retain_data: boolean | null
+          updated_at: string | null
         }
         Insert: {
           address?: string | null
           business_id: string
-          created_at?: string
-          email?: string | null
+          created_at?: string | null
+          email: string
           id?: string
+          last_service_date?: string | null
           name: string
           notes?: string | null
           phone?: string | null
-          updated_at?: string
+          retain_data?: boolean | null
+          updated_at?: string | null
         }
         Update: {
           address?: string | null
           business_id?: string
-          created_at?: string
-          email?: string | null
+          created_at?: string | null
+          email?: string
           id?: string
+          last_service_date?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
-          updated_at?: string
+          retain_data?: boolean | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -296,60 +529,33 @@ export type Database = {
           },
         ]
       }
-      currencies: {
-        Row: {
-          code: string
-          created_at: string
-          id: string
-          is_active: boolean | null
-          name: string
-          symbol: string
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          id?: string
-          is_active?: boolean | null
-          name: string
-          symbol: string
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          id?: string
-          is_active?: boolean | null
-          name?: string
-          symbol?: string
-        }
-        Relationships: []
-      }
       invoice_items: {
         Row: {
-          created_at: string
+          created_at: string | null
           description: string
           id: string
           invoice_id: string
-          quantity: number | null
+          quantity: number
           service_id: string | null
           total_price: number
           unit_price: number
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           description: string
           id?: string
           invoice_id: string
-          quantity?: number | null
+          quantity?: number
           service_id?: string | null
           total_price: number
           unit_price: number
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           description?: string
           id?: string
           invoice_id?: string
-          quantity?: number | null
+          quantity?: number
           service_id?: string | null
           total_price?: number
           unit_price?: number
@@ -376,49 +582,52 @@ export type Database = {
           booking_id: string | null
           business_id: string
           client_id: string
-          created_at: string
+          created_at: string | null
+          currency: string | null
           due_date: string | null
           id: string
           invoice_number: string
           notes: string | null
           paid_at: string | null
-          status: Database["public"]["Enums"]["invoice_status"] | null
+          status: string
           subtotal: number
           tax_amount: number | null
           total_amount: number
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           booking_id?: string | null
           business_id: string
           client_id: string
-          created_at?: string
+          created_at?: string | null
+          currency?: string | null
           due_date?: string | null
           id?: string
           invoice_number: string
           notes?: string | null
           paid_at?: string | null
-          status?: Database["public"]["Enums"]["invoice_status"] | null
+          status?: string
           subtotal: number
           tax_amount?: number | null
           total_amount: number
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           booking_id?: string | null
           business_id?: string
           client_id?: string
-          created_at?: string
+          created_at?: string | null
+          currency?: string | null
           due_date?: string | null
           id?: string
           invoice_number?: string
           notes?: string | null
           paid_at?: string | null
-          status?: Database["public"]["Enums"]["invoice_status"] | null
+          status?: string
           subtotal?: number
           tax_amount?: number | null
           total_amount?: number
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -444,119 +653,216 @@ export type Database = {
           },
         ]
       }
-      notifications: {
+      notification_log: {
         Row: {
           booking_id: string | null
-          business_id: string
-          client_id: string | null
+          business_id: string | null
           created_at: string
           delivered_at: string | null
           error_message: string | null
           id: string
-          invoice_id: string | null
           message: string
+          notification_type: string
           recipient: string
           sent_at: string | null
-          status: Database["public"]["Enums"]["notification_status"] | null
+          status: string
           subject: string | null
-          type: Database["public"]["Enums"]["notification_type"]
         }
         Insert: {
           booking_id?: string | null
-          business_id: string
-          client_id?: string | null
+          business_id?: string | null
           created_at?: string
           delivered_at?: string | null
           error_message?: string | null
           id?: string
-          invoice_id?: string | null
           message: string
+          notification_type: string
           recipient: string
           sent_at?: string | null
-          status?: Database["public"]["Enums"]["notification_status"] | null
+          status?: string
           subject?: string | null
-          type: Database["public"]["Enums"]["notification_type"]
         }
         Update: {
           booking_id?: string | null
-          business_id?: string
-          client_id?: string | null
+          business_id?: string | null
           created_at?: string
           delivered_at?: string | null
           error_message?: string | null
           id?: string
-          invoice_id?: string | null
           message?: string
+          notification_type?: string
           recipient?: string
           sent_at?: string | null
-          status?: Database["public"]["Enums"]["notification_status"] | null
+          status?: string
           subject?: string | null
-          type?: Database["public"]["Enums"]["notification_type"]
         }
         Relationships: [
           {
-            foreignKeyName: "notifications_booking_id_fkey"
+            foreignKeyName: "notification_log_booking_id_fkey"
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "notifications_business_id_fkey"
+            foreignKeyName: "notification_log_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_methods: {
+        Row: {
+          business_id: string
+          created_at: string
+          details: string
+          display_name: string | null
+          id: string
+          instructions: string | null
+          is_active: boolean
+          name: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          details: string
+          display_name?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean
+          name: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          details?: string
+          display_name?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean
+          name?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_transactions: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          business_amount: number | null
+          business_id: string | null
+          created_at: string | null
+          currency: string | null
+          id: string
+          metadata: Json | null
+          payment_method: string | null
+          paystack_reference: string | null
+          platform_amount: number | null
+          split_amount: number | null
+          status: string | null
+          subscription_id: string | null
+          transaction_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id?: string | null
+          business_amount?: number | null
+          business_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string | null
+          paystack_reference?: string | null
+          platform_amount?: number | null
+          split_amount?: number | null
+          status?: string | null
+          subscription_id?: string | null
+          transaction_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          business_amount?: number | null
+          business_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string | null
+          paystack_reference?: string | null
+          platform_amount?: number | null
+          split_amount?: number | null
+          status?: string | null
+          subscription_id?: string | null
+          transaction_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "notifications_client_id_fkey"
-            columns: ["client_id"]
+            foreignKeyName: "payment_transactions_subscription_id_fkey"
+            columns: ["subscription_id"]
             isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "notifications_invoice_id_fkey"
-            columns: ["invoice_id"]
-            isOneToOne: false
-            referencedRelation: "invoices"
+            referencedRelation: "subscriptions"
             referencedColumns: ["id"]
           },
         ]
       }
-      payment_gateways: {
+      profiles: {
         Row: {
-          configuration: Json | null
-          created_at: string
-          description: string | null
+          created_at: string | null
+          email: string | null
+          first_name: string | null
           id: string
-          is_active: boolean | null
-          name: string
-          slug: string
-          supported_currencies: string[] | null
-          updated_at: string
+          last_name: string | null
+          updated_at: string | null
         }
         Insert: {
-          configuration?: Json | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_active?: boolean | null
-          name: string
-          slug: string
-          supported_currencies?: string[] | null
-          updated_at?: string
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          updated_at?: string | null
         }
         Update: {
-          configuration?: Json | null
-          created_at?: string
-          description?: string | null
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
           id?: string
-          is_active?: boolean | null
-          name?: string
-          slug?: string
-          supported_currencies?: string[] | null
-          updated_at?: string
+          last_name?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -564,38 +870,47 @@ export type Database = {
         Row: {
           business_id: string
           category: string | null
-          created_at: string
+          created_at: string | null
+          currency: string | null
           description: string | null
           duration_minutes: number
           id: string
           is_active: boolean | null
+          is_transport_service: boolean | null
           name: string
           price: number
-          updated_at: string
+          transport_details: Json | null
+          updated_at: string | null
         }
         Insert: {
           business_id: string
           category?: string | null
-          created_at?: string
+          created_at?: string | null
+          currency?: string | null
           description?: string | null
           duration_minutes: number
           id?: string
           is_active?: boolean | null
+          is_transport_service?: boolean | null
           name: string
           price: number
-          updated_at?: string
+          transport_details?: Json | null
+          updated_at?: string | null
         }
         Update: {
           business_id?: string
           category?: string | null
-          created_at?: string
+          created_at?: string | null
+          currency?: string | null
           description?: string | null
           duration_minutes?: number
           id?: string
           is_active?: boolean | null
+          is_transport_service?: boolean | null
           name?: string
           price?: number
-          updated_at?: string
+          transport_details?: Json | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -610,36 +925,45 @@ export type Database = {
       staff: {
         Row: {
           business_id: string
-          created_at: string
-          email: string | null
+          created_at: string | null
+          email: string
+          gender: string | null
           id: string
           is_active: boolean | null
           name: string
           phone: string | null
+          shift: string | null
           specialties: string[] | null
-          updated_at: string
+          updated_at: string | null
+          workload: string | null
         }
         Insert: {
           business_id: string
-          created_at?: string
-          email?: string | null
+          created_at?: string | null
+          email: string
+          gender?: string | null
           id?: string
           is_active?: boolean | null
           name: string
           phone?: string | null
+          shift?: string | null
           specialties?: string[] | null
-          updated_at?: string
+          updated_at?: string | null
+          workload?: string | null
         }
         Update: {
           business_id?: string
-          created_at?: string
-          email?: string | null
+          created_at?: string | null
+          email?: string
+          gender?: string | null
           id?: string
           is_active?: boolean | null
           name?: string
           phone?: string | null
+          shift?: string | null
           specialties?: string[] | null
-          updated_at?: string
+          updated_at?: string | null
+          workload?: string | null
         }
         Relationships: [
           {
@@ -651,138 +975,266 @@ export type Database = {
           },
         ]
       }
-      subscription_plans: {
+      staff_attendance: {
         Row: {
+          attendance_date: string
+          business_id: string
           created_at: string
-          currency: string | null
-          description: string | null
-          features: Json | null
           id: string
-          is_active: boolean | null
-          max_bookings_per_month: number | null
-          max_services: number | null
-          max_staff: number | null
-          name: string
-          price_monthly: number
-          price_yearly: number | null
-          slug: string
+          location_info: Json | null
+          notes: string | null
+          sign_in_time: string
+          sign_out_time: string | null
+          staff_id: string
+          status: string
           updated_at: string
         }
         Insert: {
+          attendance_date?: string
+          business_id: string
           created_at?: string
-          currency?: string | null
-          description?: string | null
-          features?: Json | null
           id?: string
-          is_active?: boolean | null
-          max_bookings_per_month?: number | null
-          max_services?: number | null
-          max_staff?: number | null
-          name: string
-          price_monthly: number
-          price_yearly?: number | null
-          slug: string
+          location_info?: Json | null
+          notes?: string | null
+          sign_in_time?: string
+          sign_out_time?: string | null
+          staff_id: string
+          status?: string
           updated_at?: string
         }
         Update: {
-          created_at?: string
-          currency?: string | null
-          description?: string | null
-          features?: Json | null
-          id?: string
-          is_active?: boolean | null
-          max_bookings_per_month?: number | null
-          max_services?: number | null
-          max_staff?: number | null
-          name?: string
-          price_monthly?: number
-          price_yearly?: number | null
-          slug?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      subscriptions: {
-        Row: {
-          business_id: string
-          created_at: string
-          current_period_end: string
-          current_period_start: string
-          id: string
-          plan_id: string
-          status: string | null
-          stripe_subscription_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          business_id: string
-          created_at?: string
-          current_period_end: string
-          current_period_start?: string
-          id?: string
-          plan_id: string
-          status?: string | null
-          stripe_subscription_id?: string | null
-          updated_at?: string
-        }
-        Update: {
+          attendance_date?: string
           business_id?: string
           created_at?: string
-          current_period_end?: string
-          current_period_start?: string
           id?: string
-          plan_id?: string
-          status?: string | null
-          stripe_subscription_id?: string | null
+          location_info?: Json | null
+          notes?: string | null
+          sign_in_time?: string
+          sign_out_time?: string | null
+          staff_id?: string
+          status?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "subscriptions_business_id_fkey"
+            foreignKeyName: "staff_attendance_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "subscriptions_plan_id_fkey"
-            columns: ["plan_id"]
+            foreignKeyName: "staff_attendance_staff_id_fkey"
+            columns: ["staff_id"]
             isOneToOne: false
-            referencedRelation: "subscription_plans"
+            referencedRelation: "staff"
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscription_discounts: {
+        Row: {
+          created_at: string | null
+          discount_percentage: number
+          id: string
+          payment_interval: string
+        }
+        Insert: {
+          created_at?: string | null
+          discount_percentage?: number
+          id?: string
+          payment_interval: string
+        }
+        Update: {
+          created_at?: string | null
+          discount_percentage?: number
+          id?: string
+          payment_interval?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          auto_split_enabled: boolean | null
+          bookings_limit: number | null
+          business_id: string | null
+          created_at: string
+          current_period_end: string
+          feature_flags: Json | null
+          id: string
+          notification_channels: Json | null
+          payment_interval: string | null
+          paystack_subaccount_id: string | null
+          plan_type: string
+          split_percentage: number | null
+          staff_limit: number | null
+          status: string
+          stripe_subscription_id: string | null
+          trial_ends_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          auto_split_enabled?: boolean | null
+          bookings_limit?: number | null
+          business_id?: string | null
+          created_at?: string
+          current_period_end: string
+          feature_flags?: Json | null
+          id?: string
+          notification_channels?: Json | null
+          payment_interval?: string | null
+          paystack_subaccount_id?: string | null
+          plan_type: string
+          split_percentage?: number | null
+          staff_limit?: number | null
+          status?: string
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          auto_split_enabled?: boolean | null
+          bookings_limit?: number | null
+          business_id?: string | null
+          created_at?: string
+          current_period_end?: string
+          feature_flags?: Json | null
+          id?: string
+          notification_channels?: Json | null
+          payment_interval?: string | null
+          paystack_subaccount_id?: string | null
+          plan_type?: string
+          split_percentage?: number | null
+          staff_limit?: number | null
+          status?: string
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      generate_invoice_number: {
+      assign_admin_role: {
+        Args: { _user_email: string }
+        Returns: undefined
+      }
+      calculate_distance: {
+        Args: { lat1: number; lon1: number; lat2: number; lon2: number }
+        Returns: number
+      }
+      calculate_reschedule_deadline: {
+        Args: { booking_date: string; booking_time: string }
+        Returns: string
+      }
+      create_paid_subscription: {
+        Args: {
+          business_id: string
+          plan_type: string
+          paystack_reference?: string
+        }
+        Returns: string
+      }
+      generate_ticket_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      generate_ticket_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
+      get_user_roles: {
+        Args: { _user_id: string }
+        Returns: {
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
       }
-      get_user_business_ids: {
-        Args: { user_uuid: string }
-        Returns: string[]
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
+      search_businesses_by_location: {
+        Args: {
+          search_lat: number
+          search_lng: number
+          search_radius_km?: number
+          search_query?: string
+        }
+        Returns: {
+          id: string
+          name: string
+          description: string
+          address: string
+          city: string
+          country: string
+          phone: string
+          email: string
+          website: string
+          logo_url: string
+          featured_image_url: string
+          latitude: number
+          longitude: number
+          average_rating: number
+          total_reviews: number
+          business_hours: Json
+          is_verified: boolean
+          service_radius_km: number
+          currency: string
+          show_on_map: boolean
+          map_description: string
+          service_categories: string[]
+          service_names: string[]
+          total_services: number
+          distance_km: number
+        }[]
+      }
+      validate_business_ownership: {
+        Args: { business_id: string }
+        Returns: boolean
       }
     }
     Enums: {
-      booking_status:
-        | "pending"
-        | "confirmed"
-        | "completed"
-        | "cancelled"
-        | "no_show"
-      business_status: "active" | "inactive" | "suspended"
-      invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
-      notification_status: "pending" | "sent" | "delivered" | "failed"
-      notification_type: "email" | "sms" | "whatsapp"
-      subscription_plan: "free" | "basic" | "business" | "corporate"
+      app_role: "admin" | "moderator" | "user"
+      subscription_plan_type:
+        | "trial"
+        | "starter"
+        | "medium"
+        | "premium"
+        | "payasyougo"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -898,18 +1350,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      booking_status: [
-        "pending",
-        "confirmed",
-        "completed",
-        "cancelled",
-        "no_show",
+      app_role: ["admin", "moderator", "user"],
+      subscription_plan_type: [
+        "trial",
+        "starter",
+        "medium",
+        "premium",
+        "payasyougo",
       ],
-      business_status: ["active", "inactive", "suspended"],
-      invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
-      notification_status: ["pending", "sent", "delivered", "failed"],
-      notification_type: ["email", "sms", "whatsapp"],
-      subscription_plan: ["free", "basic", "business", "corporate"],
     },
   },
 } as const

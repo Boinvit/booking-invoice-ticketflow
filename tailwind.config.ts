@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-	darkMode: ["class"],
+	darkMode: "class", // Set darkMode to class for Tailwind
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -61,6 +61,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				'royal-red': {
+					DEFAULT: 'hsl(var(--royal-red))',
+					foreground: 'hsl(var(--royal-red-foreground))',
+					muted: 'hsl(var(--royal-red-muted))',
+					accent: 'hsl(var(--royal-red-accent))'
 				}
 			},
 			borderRadius: {

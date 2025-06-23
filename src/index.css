@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,20 +36,19 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Royal Red color variants */
+    --royal-red: 355 85% 45%;
+    --royal-red-foreground: 0 0% 98%;
+    --royal-red-muted: 355 45% 85%;
+    --royal-red-accent: 355 65% 55%;
   }
 
   .dark {
@@ -87,6 +87,12 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Royal Red color variants for dark mode */
+    --royal-red: 355 75% 55%;
+    --royal-red-foreground: 0 0% 98%;
+    --royal-red-muted: 355 35% 25%;
+    --royal-red-accent: 355 85% 65%;
   }
 }
 

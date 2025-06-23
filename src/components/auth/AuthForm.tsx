@@ -1,125 +1,127 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { LogIn, UserPlus } from 'lucide-react';
+import { AuthAlerts } from './AuthAlerts';
+import { SignInForm } from './SignInForm';
+import { SignUpForm } from './SignUpForm';
+import { PasswordResetForm } from './PasswordResetForm';
 
 export const AuthForm = () => {
-  const { signIn, signUp } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('signin');
+  const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState('');
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await signIn(email, password);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success('Welcome back!');
-      }
-    } catch (error) {
-      toast.error('An error occurred during sign in');
-    } finally {
-      setLoading(false);
+  // Redirect authenticated users
+  useEffect(() => {
+    if (user) {
+      console.log('User authenticated, redirecting to dashboard:', user.email);
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, location]);
+
+  const clearError = () => {
+    setAuthError(null);
+    setResetEmailSent(false);
+    setSignUpSuccess(false);
+  };
+
+  const handleSignUpSuccess = (email: string) => {
+    setSignUpSuccess(true);
+    setPendingEmail(email);
+    toast.success('Account created! Please check your email for the confirmation link.');
+    setAuthError(null);
+  };
+
+  const handleResetSuccess = () => {
+    setResetEmailSent(true);
+    toast.success('Password reset email sent! Check your inbox.');
+    setAuthError(null);
+  };
+
+  const handleError = (error: string | null) => {
+    console.log('Auth form error:', error);
+    setAuthError(error);
+    setLoading(false);
+    if (error) {
+      toast.error(error);
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await signUp(email, password);
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success('Check your email for the confirmation link!');
-      }
-    } catch (error) {
-      toast.error('An error occurred during sign up');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const isFormDisabled = loading || authLoading;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
+    <div className="w-full max-w-md mx-auto">
+      <Card className="w-full">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-900">BookFlow</CardTitle>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/307c9897-7d4d-4c72-9525-71af1ea5c02f.png" 
+              alt="Boinvit Logo" 
+              className="h-16 w-auto"
+            />
+          </div>
+          <CardTitle className="text-2xl font-bold text-gray-900">Welcome to Boinvit</CardTitle>
           <CardDescription>Your complete booking management solution</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <AuthAlerts 
+            authError={authError}
+            signUpSuccess={signUpSuccess}
+            resetEmailSent={resetEmailSent}
+            pendingEmail={pendingEmail}
+          />
+          
+          <Tabs value={activeTab} onValueChange={(value) => { setActiveTab(value); clearError(); }} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="signin" className="flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger value="signup" className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Sign Up
+              </TabsTrigger>
+              <TabsTrigger value="reset">Reset</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Signing in...' : 'Sign In'}
-                </Button>
-              </form>
+              <SignInForm 
+                loading={isFormDisabled}
+                authError={authError}
+                pendingEmail={pendingEmail}
+                onError={handleError}
+              />
             </TabsContent>
             
             <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder="Create a password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Creating account...' : 'Create Account'}
-                </Button>
-              </form>
+              <SignUpForm 
+                loading={isFormDisabled}
+                authError={authError}
+                onError={handleError}
+                onSignUpSuccess={handleSignUpSuccess}
+                onTabChange={setActiveTab}
+              />
+            </TabsContent>
+
+            <TabsContent value="reset">
+              <PasswordResetForm 
+                loading={isFormDisabled}
+                authError={authError}
+                onError={handleError}
+                onResetSuccess={handleResetSuccess}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
