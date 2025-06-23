@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,11 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Clock, DollarSign, Calendar as CalendarIcon, Users, Lock, User } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Clock, DollarSign, Calendar as CalendarIcon, Users, Lock, User, CreditCard, ArrowLeft } from 'lucide-react';
 import { format, addMinutes, setHours, setMinutes } from 'date-fns';
 import { toast } from 'sonner';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { MobileOptimizedBookingCalendar } from './MobileOptimizedBookingCalendar';
+import { ClientPaymentSection } from '@/components/payment/ClientPaymentSection';
 
 interface Service {
   id: string;
@@ -31,7 +32,7 @@ interface Staff {
   is_active: boolean;
 }
 
-interface PublicBookingCalendarProps {
+interface MobileOptimizedBookingCalendarProps {
   businessId: string;
   selectedService: Service;
   onBookingComplete?: () => void;
@@ -44,25 +45,13 @@ const formatPrice = (price: number, currency: string = 'USD') => {
   return `$${price}`;
 };
 
-export const PublicBookingCalendar = ({ businessId, selectedService, onBookingComplete }: PublicBookingCalendarProps) => {
-  const isMobile = useIsMobile();
-
-  // Use mobile-optimized version for mobile devices
-  if (isMobile) {
-    return (
-      <MobileOptimizedBookingCalendar 
-        businessId={businessId}
-        selectedService={selectedService}
-        onBookingComplete={onBookingComplete}
-      />
-    );
-  }
-
-  // Desktop version remains the same
+export const MobileOptimizedBookingCalendar = ({ businessId, selectedService, onBookingComplete }: MobileOptimizedBookingCalendarProps) => {
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState<'date' | 'time' | 'info' | 'payment'>('date');
+  const [showPayment, setShowPayment] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     email: '',
@@ -70,13 +59,13 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
     notes: ''
   });
 
-  // Fetch business info for currency
+  // Fetch business info for currency and payment details
   const { data: business } = useQuery({
     queryKey: ['business', businessId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('businesses')
-        .select('currency')
+        .select('*')
         .eq('id', businessId)
         .single();
       
@@ -85,7 +74,6 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
     },
   });
 
-  
   // Fetch staff
   const { data: staff } = useQuery({
     queryKey: ['staff', businessId],
@@ -136,29 +124,11 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
     enabled: !!selectedDate,
   });
 
-  // Fetch blocked time slots for selected date
-  const { data: blockedSlots } = useQuery({
-    queryKey: ['blocked-slots', businessId, selectedDate],
-    queryFn: async () => {
-      if (!selectedDate) return [];
-      
-      const { data, error } = await supabase
-        .from('blocked_time_slots')
-        .select('*')
-        .eq('business_id', businessId)
-        .eq('blocked_date', format(selectedDate, 'yyyy-MM-dd'));
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!selectedDate,
-  });
-
-  // Generate available time slots with booking counts
+  // Generate available time slots
   const generateTimeSlots = () => {
     const slots = [];
-    const startHour = 9; // 9 AM
-    const endHour = 17; // 5 PM
+    const startHour = 9;
+    const endHour = 17;
     const slotDuration = businessSettings?.booking_slot_duration_minutes || 30;
     const maxCapacity = businessSettings?.max_bookings_per_slot || 5;
     
@@ -167,27 +137,19 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
         const slotTime = setMinutes(setHours(new Date(), hour), minute);
         const slotEndTime = addMinutes(slotTime, selectedService.duration_minutes);
         
-        // Check if slot fits within business hours
         if (slotEndTime.getHours() <= endHour) {
           const timeString = format(slotTime, 'HH:mm');
-          
-          // Check if slot is blocked
-          const isBlocked = blockedSlots?.some(blocked => blocked.blocked_time === timeString);
-          
-          // Count current bookings for this time slot
           const currentBookings = existingBookings?.filter(booking => 
             booking.booking_time === timeString
           ).length || 0;
           
-          // Check availability
-          const isAvailable = !isBlocked && currentBookings < maxCapacity;
+          const isAvailable = currentBookings < maxCapacity;
           
           slots.push({
             time: timeString,
             available: isAvailable,
             currentBookings,
             maxCapacity,
-            isBlocked,
           });
         }
       }
@@ -198,57 +160,46 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
 
   const timeSlots = generateTimeSlots();
 
-  // Improved booking mutation with better error handling
+  // Create booking mutation
   const createBookingMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedDate || !selectedTimeSlot || !customerInfo.name.trim() || !customerInfo.email.trim()) {
+      if (!selectedDate || !selectedTimeSlot || !customerInfo.name || !customerInfo.email) {
         throw new Error('Please fill in all required fields');
       }
 
-      const email = customerInfo.email.toLowerCase().trim();
-      const name = customerInfo.name.trim();
-
-      // Step 1: Handle client creation/update with simpler logic
-      let clientId = null;
-      
-      // Check for existing client
+      // Get or create client
       const { data: existingClient } = await supabase
         .from('clients')
         .select('id')
         .eq('business_id', businessId)
-        .eq('email', email)
-        .maybeSingle();
+        .eq('email', customerInfo.email)
+        .single();
 
-      if (existingClient) {
-        clientId = existingClient.id;
-      } else {
-        // Create new client
-        const { data: newClient, error: createError } = await supabase
+      let clientId = existingClient?.id;
+
+      if (!clientId) {
+        const { data: newClient, error: clientError } = await supabase
           .from('clients')
-          .insert({
+          .insert([{
             business_id: businessId,
-            name: name,
-            email: email,
-            phone: customerInfo.phone?.trim() || null,
-          })
+            name: customerInfo.name,
+            email: customerInfo.email,
+            phone: customerInfo.phone,
+          }])
           .select('id')
           .single();
 
-        if (createError) {
-          console.error('Error creating client:', createError);
-          throw new Error('Failed to create client profile');
-        }
-
+        if (clientError) throw clientError;
         clientId = newClient.id;
       }
 
-      // Step 2: Create booking
-      const ticketNumber = `TKT-${Date.now()}`;
-      const currency = business?.currency || selectedService.currency || 'USD';
+      // Generate ticket number
+      const ticketNumber = `TKT-${format(new Date(), 'yyyyMMdd')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
 
-      const { data: booking, error: bookingError } = await supabase
+      // Create booking
+      const { data, error } = await supabase
         .from('bookings')
-        .insert({
+        .insert([{
           business_id: businessId,
           client_id: clientId,
           service_id: selectedService.id,
@@ -258,33 +209,24 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
           duration_minutes: selectedService.duration_minutes,
           total_amount: selectedService.price,
           status: 'confirmed',
+          payment_status: 'pending',
           ticket_number: ticketNumber,
-          notes: customerInfo.notes?.trim() || null,
-        })
+          notes: customerInfo.notes,
+        }])
         .select()
         .single();
 
-      if (bookingError) {
-        console.error('Error creating booking:', bookingError);
-        throw new Error('Failed to create booking');
-      }
-
-      return booking;
+      if (error) throw error;
+      return data;
     },
     onSuccess: (data) => {
       toast.success(`Booking confirmed! Your ticket number is ${data.ticket_number}`);
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
-      
-      // Reset form
-      setSelectedStaff(null);
-      setSelectedTimeSlot(null);
-      setCustomerInfo({ name: '', email: '', phone: '', notes: '' });
-      onBookingComplete?.();
+      setShowPayment(true);
     },
-    onError: (error: any) => {
-      console.error('Booking failed:', error);
-      toast.error(error.message || 'Failed to create booking. Please try again.');
+    onError: (error) => {
+      console.error('Booking error:', error);
+      toast.error('Failed to create booking. Please try again.');
     },
   });
 
@@ -292,62 +234,69 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
     createBookingMutation.mutate();
   };
 
-  const isFormValid = customerInfo.name.trim() && customerInfo.email.trim() && selectedDate && selectedTimeSlot;
+  const isFormValid = customerInfo.name && customerInfo.email && selectedDate && selectedTimeSlot;
   const currency = business?.currency || selectedService.currency || 'USD';
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Book {selectedService.name}</CardTitle>
-        <p className="text-sm text-gray-600">
-          Duration: {selectedService.duration_minutes} minutes • Price: {formatPrice(selectedService.price, currency)}
-        </p>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Date and Time Selection */}
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 'date':
+        return (
           <div className="space-y-4">
-            <div>
-              <h3 className="font-medium mb-3 flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4" />
-                Select Date & Time
-              </h3>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                disabled={(date) => date < new Date()}
-                className="rounded-md border"
-              />
+            <h3 className="text-lg font-semibold">Select Date</h3>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              disabled={(date) => date < new Date()}
+              className="rounded-md border w-full"
+            />
+            {selectedDate && (
+              <Button 
+                onClick={() => setCurrentStep('time')} 
+                className="w-full"
+              >
+                Continue to Time Selection
+              </Button>
+            )}
+          </div>
+        );
+
+      case 'time':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setCurrentStep('date')}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <h3 className="text-lg font-semibold">Select Time</h3>
+            </div>
+            
+            <div className="text-sm text-gray-600">
+              {format(selectedDate!, 'EEEE, MMMM d, yyyy')}
             </div>
 
-            {selectedDate && (
-              <div className="space-y-2">
-                <h4 className="font-medium">Available Times</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  {timeSlots.map(({ time, available, currentBookings, maxCapacity, isBlocked }) => (
-                    <div key={time} className="relative">
-                      <Button
-                        variant={selectedTimeSlot === time ? "default" : "outline"}
-                        size="sm"
-                        disabled={!available}
-                        onClick={() => setSelectedTimeSlot(time)}
-                        className="w-full text-xs"
-                      >
-                        {time}
-                        {isBlocked && <Lock className="h-3 w-3 ml-1" />}
-                      </Button>
-                      <div className="flex items-center justify-center mt-1">
-                        <Badge variant={currentBookings >= maxCapacity ? "destructive" : "secondary"} className="text-xs">
-                          <Users className="h-3 w-3 mr-1" />
-                          {currentBookings}/{maxCapacity}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
+            <div className="grid grid-cols-2 gap-2">
+              {timeSlots.map(({ time, available, currentBookings, maxCapacity }) => (
+                <div key={time} className="relative">
+                  <Button
+                    variant={selectedTimeSlot === time ? "default" : "outline"}
+                    size="sm"
+                    disabled={!available}
+                    onClick={() => setSelectedTimeSlot(time)}
+                    className="w-full text-xs"
+                  >
+                    {time}
+                    {!available && <Lock className="h-3 w-3 ml-1" />}
+                  </Button>
+                  <div className="flex items-center justify-center mt-1">
+                    <Badge variant={currentBookings >= maxCapacity ? "destructive" : "secondary"} className="text-xs">
+                      <Users className="h-3 w-3 mr-1" />
+                      {currentBookings}/{maxCapacity}
+                    </Badge>
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
 
             {/* Staff Selection */}
             {staff && staff.length > 0 && (
@@ -370,14 +319,27 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Customer Information */}
+            {selectedTimeSlot && (
+              <Button 
+                onClick={() => setCurrentStep('info')} 
+                className="w-full"
+              >
+                Continue to Your Information
+              </Button>
+            )}
+          </div>
+        );
+
+      case 'info':
+        return (
           <div className="space-y-4">
-            <h3 className="font-medium flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Your Information
-            </h3>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setCurrentStep('time')}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <h3 className="text-lg font-semibold">Your Information</h3>
+            </div>
             
             <div className="space-y-3">
               <div>
@@ -409,7 +371,7 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
                   id="phone"
                   value={customerInfo.phone}
                   onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
-                  placeholder="(555) 123-4567"
+                  placeholder="+1 (555) 123-4567"
                 />
               </div>
 
@@ -427,39 +389,37 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
             </div>
 
             {/* Booking Summary */}
-            {isFormValid && (
-              <div className="space-y-3 pt-4 border-t">
-                <h4 className="font-medium">Booking Summary</h4>
-                <div className="space-y-2 text-sm">
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+              <h4 className="font-medium">Booking Summary</h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span>Service:</span>
+                  <span className="font-medium">{selectedService.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Date:</span>
+                  <span>{format(selectedDate!, 'PPP')}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Time:</span>
+                  <span>{selectedTimeSlot}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Duration:</span>
+                  <span>{selectedService.duration_minutes} minutes</span>
+                </div>
+                {selectedStaff && (
                   <div className="flex justify-between">
-                    <span>Service:</span>
-                    <span className="font-medium">{selectedService.name}</span>
+                    <span>Staff:</span>
+                    <span>{selectedStaff.name}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Date:</span>
-                    <span>{format(selectedDate, 'PPP')}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Time:</span>
-                    <span>{selectedTimeSlot}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Duration:</span>
-                    <span>{selectedService.duration_minutes} minutes</span>
-                  </div>
-                  {selectedStaff && (
-                    <div className="flex justify-between">
-                      <span>Staff:</span>
-                      <span>{selectedStaff.name}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between font-bold border-t pt-2">
-                    <span>Total:</span>
-                    <span>{formatPrice(selectedService.price, currency)}</span>
-                  </div>
+                )}
+                <div className="flex justify-between font-bold border-t pt-2">
+                  <span>Total:</span>
+                  <span>{formatPrice(selectedService.price, currency)}</span>
                 </div>
               </div>
-            )}
+            </div>
 
             <Button
               onClick={handleBooking}
@@ -468,12 +428,71 @@ export const PublicBookingCalendar = ({ businessId, selectedService, onBookingCo
             >
               {createBookingMutation.isPending ? 'Creating Booking...' : 'Book Appointment'}
             </Button>
-
-            <p className="text-xs text-gray-500 text-center">
-              You'll receive a confirmation via email and be added as a client
-            </p>
           </div>
-        </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  if (showPayment) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="w-5 h-5" />
+            Complete Your Payment
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ClientPaymentSection
+            services={[{
+              id: selectedService.id,
+              name: selectedService.name,
+              price: selectedService.price,
+              currency: currency
+            }]}
+            clientEmail={customerInfo.email}
+            businessName={business?.name || ''}
+            businessCurrency={currency}
+            paymentInstructions={business?.payment_instructions}
+            business={{
+              id: businessId,
+              phone: business?.phone,
+              whatsapp: business?.whatsapp,
+              email: business?.email,
+              address: business?.address,
+              latitude: business?.latitude,
+              longitude: business?.longitude
+            }}
+            onPaymentSuccess={() => {
+              toast.success('Payment completed successfully!');
+              onBookingComplete?.();
+            }}
+          />
+          <Button
+            variant="outline"
+            onClick={() => setShowPayment(false)}
+            className="w-full mt-4"
+          >
+            Back to Booking Details
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Book {selectedService.name}</CardTitle>
+        <p className="text-sm text-gray-600">
+          Duration: {selectedService.duration_minutes} minutes • Price: {formatPrice(selectedService.price, currency)}
+        </p>
+      </CardHeader>
+      <CardContent>
+        {renderStepContent()}
       </CardContent>
     </Card>
   );

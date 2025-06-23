@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { EnhancedBusinessHeader } from './EnhancedBusinessHeader';
 import { ServicesList } from './ServicesList';
 import { EmptyServiceSelection } from './EmptyServiceSelection';
-import { PublicBookingCalendar } from './PublicBookingCalendar';
+import { MobileOptimizedBookingCalendar } from './MobileOptimizedBookingCalendar';
 import { BusinessPaymentInstructions } from '@/components/business/BusinessPaymentInstructions';
 import { MobileBookingHeader } from './MobileBookingHeader';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Service {
   id: string;
@@ -28,6 +29,7 @@ export const EnhancedPublicBookingContent: React.FC<EnhancedPublicBookingContent
   businessId
 }) => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const isMobile = useIsMobile();
 
   const handleServiceSelect = (service: Service) => {
     setSelectedService(service);
@@ -38,7 +40,7 @@ export const EnhancedPublicBookingContent: React.FC<EnhancedPublicBookingContent
   };
 
   const BookingContent = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Enhanced Business Header */}
       <EnhancedBusinessHeader business={business} />
       
@@ -61,11 +63,11 @@ export const EnhancedPublicBookingContent: React.FC<EnhancedPublicBookingContent
         <div className="space-y-4">
           <button
             onClick={handleBackToServices}
-            className="text-blue-600 hover:text-blue-800 flex items-center gap-2"
+            className="text-blue-600 hover:text-blue-800 flex items-center gap-2 text-sm md:text-base"
           >
             ← Back to Services
           </button>
-          <PublicBookingCalendar 
+          <MobileOptimizedBookingCalendar 
             businessId={businessId} 
             selectedService={selectedService}
             onBookingComplete={handleBackToServices}
@@ -78,14 +80,18 @@ export const EnhancedPublicBookingContent: React.FC<EnhancedPublicBookingContent
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header with Menu */}
-      <MobileBookingHeader business={business}>
-        <BookingContent />
-      </MobileBookingHeader>
-
-      {/* Desktop Content */}
-      <div className="max-w-4xl mx-auto py-8 px-4 hidden lg:block">
-        <BookingContent />
-      </div>
+      {isMobile ? (
+        <MobileBookingHeader business={business}>
+          <BookingContent />
+        </MobileBookingHeader>
+      ) : (
+        <>
+          {/* Desktop Content */}
+          <div className="max-w-4xl mx-auto py-8 px-4">
+            <BookingContent />
+          </div>
+        </>
+      )}
     </div>
   );
 };
