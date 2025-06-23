@@ -1,27 +1,4 @@
-<<<<<<< HEAD
 
-import React from 'react';
-import { GeneralSettingsContainer } from './general/GeneralSettingsContainer';
-import { PaystackIntegrationSection } from './PaystackIntegrationSection';
-import { GeneralSettingsForm } from './general/GeneralSettingsForm';
-import { useGeneralSettings } from '@/hooks/useGeneralSettings';
-
-export const GeneralSettings = () => {
-  const { 
-    business, 
-    settings, 
-    isLoading: settingsLoading, 
-    errors, 
-    isUpdating, 
-    handleSubmit 
-  } = useGeneralSettings();
-
-  if (!business) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-gray-600">Loading business settings...</p>
-      </div>
-=======
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -152,25 +129,10 @@ export const GeneralSettings = () => {
           <p className="text-gray-500">No business found. Please set up your business first.</p>
         </CardContent>
       </Card>
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
     );
   }
 
   return (
-<<<<<<< HEAD
-    <div className="space-y-8">
-      <GeneralSettingsContainer isLoading={settingsLoading}>
-        <GeneralSettingsForm
-          settings={settings}
-          errors={errors}
-          isLoading={isUpdating}
-          onSubmit={handleSubmit}
-        />
-      </GeneralSettingsContainer>
-      
-      <PaystackIntegrationSection />
-    </div>
-=======
     <Card>
       <CardHeader>
         <CardTitle>General Settings</CardTitle>
@@ -298,6 +260,5 @@ export const GeneralSettings = () => {
         </form>
       </CardContent>
     </Card>
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
   );
 };

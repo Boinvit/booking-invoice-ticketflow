@@ -1,29 +1,4 @@
-<<<<<<< HEAD
 
-import React from 'react';
-import { useBusinessSettings } from '@/hooks/useBusinessSettings';
-import { BusinessSettingsContainer } from '@/components/settings/business/BusinessSettingsContainer';
-import { BusinessSettingsForm } from '@/components/settings/business/BusinessSettingsForm';
-
-export const BusinessSettings = () => {
-  const {
-    business,
-    isLoading,
-    errors,
-    isUpdating,
-    handleSubmit
-  } = useBusinessSettings();
-
-  return (
-    <BusinessSettingsContainer isLoading={isLoading} business={business}>
-      <BusinessSettingsForm
-        business={business}
-        errors={errors}
-        isLoading={isUpdating}
-        onSubmit={handleSubmit}
-      />
-    </BusinessSettingsContainer>
-=======
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -239,6 +214,5 @@ export const BusinessSettings = () => {
         </form>
       </CardContent>
     </Card>
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
   );
 };
