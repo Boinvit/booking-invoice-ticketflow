@@ -1,24 +1,14 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-<<<<<<< HEAD
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { User, Phone, Mail, Edit, Calendar } from 'lucide-react';
 import { CardSkeleton } from '@/components/ui/loading-skeleton';
-=======
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { User, Phone, Mail, MapPin, Edit, Calendar } from 'lucide-react';
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 import { format } from 'date-fns';
 
 interface ClientsListProps {
@@ -27,10 +17,7 @@ interface ClientsListProps {
 
 export const ClientsList = ({ onEditClient }: ClientsListProps) => {
   const { user } = useAuth();
-<<<<<<< HEAD
   const { handleError } = useErrorHandler();
-=======
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 
   const { data: business } = useQuery({
     queryKey: ['user-business', user?.id],
@@ -49,11 +36,7 @@ export const ClientsList = ({ onEditClient }: ClientsListProps) => {
     enabled: !!user,
   });
 
-<<<<<<< HEAD
   const { data: clients, isLoading, error } = useQuery({
-=======
-  const { data: clients, isLoading } = useQuery({
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
     queryKey: ['clients', business?.id],
     queryFn: async () => {
       if (!business) return [];
@@ -73,7 +56,6 @@ export const ClientsList = ({ onEditClient }: ClientsListProps) => {
     enabled: !!business,
   });
 
-<<<<<<< HEAD
   // Handle error using useEffect
   React.useEffect(() => {
     if (error) {
@@ -95,22 +77,11 @@ export const ClientsList = ({ onEditClient }: ClientsListProps) => {
     );
   }
 
-=======
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
-<<<<<<< HEAD
           <CardSkeleton key={i} />
-=======
-          <Card key={i} className="animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-            </CardContent>
-          </Card>
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
         ))}
       </div>
     );
@@ -175,16 +146,6 @@ export const ClientsList = ({ onEditClient }: ClientsListProps) => {
                   {client.phone}
                 </div>
               )}
-<<<<<<< HEAD
-=======
-              
-              {client.address && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin className="h-4 w-4" />
-                  {client.address}
-                </div>
-              )}
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 
               {lastBooking && (
                 <div className="flex items-center gap-2 text-sm text-gray-600 pt-2 border-t">

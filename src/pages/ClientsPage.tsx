@@ -2,11 +2,7 @@
 import React, { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ClientsList } from '@/components/clients/ClientsList';
-<<<<<<< HEAD
 import { SecureClientForm } from '@/components/clients/SecureClientForm';
-=======
-import { ClientForm } from '@/components/clients/ClientForm';
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -52,11 +48,7 @@ const ClientsPage = () => {
                   {editingClient ? 'Update client information' : 'Add a new client to your database'}
                 </SheetDescription>
               </SheetHeader>
-<<<<<<< HEAD
               <SecureClientForm 
-=======
-              <ClientForm 
->>>>>>> da6cc44b25145eca0863c1da635025fac07357ca
                 client={editingClient} 
                 onSuccess={handleFormClose}
                 onCancel={handleFormClose}
